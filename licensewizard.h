@@ -23,6 +23,7 @@ public:
            Page_Actor, Page_Story, Page_StopTrigger };
 
     LicenseWizard(QWidget *parent = nullptr);
+    void accept() override;
 
 private slots:
     void showHelp();

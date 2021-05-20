@@ -108,7 +108,7 @@ LicenseWizard::LicenseWizard(QWidget *parent)
     setPage(Page_Actor, new ActorPage);
     setPage(Page_StopTrigger, new StopTriggerPage);
 
-    setStartId(doc->SaveFile("test.xosc"));
+    setStartId(Page_Intro);
     // if (doc->SaveFile("G:\\TiEV\thesis\\xosc_generator\\qt\\test.xosc") == 0) {
     //     setStartId(Page_Intro);
     // }
@@ -166,6 +166,21 @@ void LicenseWizard::showHelp()
     QMessageBox::information(this, tr("License Wizard Help"), message);
 
     lastHelpMessage = message;
+}
+
+void LicenseWizard::accept()
+{
+    XOSC xosc;
+    xosc.initXML();
+
+    string filename = field("filename.filename").toString().toStdString();
+    xosc.setFilename(filename.c_str());
+
+    string map = field("Map.name").toString().toStdString();
+    xosc.setMap(map.c_str());
+
+    
+    QDialog::accept();
 }
 
 IntroPage::IntroPage(QWidget *parent)
