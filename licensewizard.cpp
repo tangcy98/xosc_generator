@@ -50,6 +50,7 @@ static const char * pedname[] = {
     "walker.pedestrian.0026",
 };
 static const char * miscname[] = {
+    "static.prop.container",
     "static.prop.advertisement",
     "static.prop.atm",
     "static.prop.barbeque",
@@ -59,7 +60,6 @@ static const char * miscname[] = {
     "static.prop.bench03",
     "static.prop.bike helmet",
     "static.prop.bin",
-    "static.prop.container",
 };
 static const char * category[] = {
     "car",
@@ -106,6 +106,7 @@ LicenseWizard::LicenseWizard(QWidget *parent)
     setPage(Page_Map, new MapPage);
     setPage(Page_Environment, new EnvironmentPage);
     setPage(Page_Actor, new ActorPage);
+    setPage(Page_StopTrigger, new StopTriggerPage);
 
     setStartId(doc->SaveFile("test.xosc"));
     // if (doc->SaveFile("G:\\TiEV\thesis\\xosc_generator\\qt\\test.xosc") == 0) {
@@ -864,6 +865,58 @@ void ActorPage::updateActorPage()
 
 int ActorPage::nextId() const
 {
-    return -1;
+    return LicenseWizard::Page_StopTrigger;
 }
 
+StopTriggerPage::StopTriggerPage(QWidget *parent)
+    : QWizardPage(parent)
+{
+    setTitle("<i>OpenScenario</i>&trade; StopTrigger");
+    setSubTitle("Set your StopTriggers of the whole scenario file");
+    criteria_RunningStopTest = new QLabel("criteria_RunningStopTest(recommended)");
+    criteria_RunningRedLightTest = new QLabel("criteria_RunningRedLightTest(recommended)");
+    criteria_WrongLaneTest = new QLabel("criteria_WrongLaneTest(recommended)");
+    criteria_OnSidewalkTest = new QLabel("criteria_OnSidewalkTest(recommended)");
+    criteria_KeepLaneTest = new QLabel("criteria_KeepLaneTest(recommended)");
+    criteria_CollisionTest = new QLabel("criteria_CollisionTest(recommended)");
+    criteria_DrivenDistanceTestLabel = new QLabel("criteria_DrivenDistanceTest(recommended)");
+
+    criteria_RunningStopTestCheckBox = new QCheckBox;
+    criteria_RunningStopTestCheckBox->setCheckState(Qt::Checked);
+    criteria_RunningRedLightTestCheckBox = new QCheckBox;
+    criteria_RunningRedLightTestCheckBox->setCheckState(Qt::Checked);
+    criteria_WrongLaneTestCheckBox = new QCheckBox;
+    criteria_WrongLaneTestCheckBox->setCheckState(Qt::Checked);
+    criteria_OnSidewalkTestCheckBox = new QCheckBox;
+    criteria_OnSidewalkTestCheckBox->setCheckState(Qt::Checked);
+    criteria_KeepLaneTestCheckBox = new QCheckBox;
+    criteria_KeepLaneTestCheckBox->setCheckState(Qt::Checked);
+    criteria_CollisionTestCheckBox = new QCheckBox;
+    criteria_CollisionTestCheckBox->setCheckState(Qt::Checked);
+    criteria_DrivenDistanceTestCheckBox = new QCheckBox;
+    criteria_DrivenDistanceTestCheckBox->setCheckState(Qt::Checked);
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(criteria_RunningStopTest, 0, 0);
+    layout->addWidget(criteria_RunningRedLightTest, 1, 0);
+    layout->addWidget(criteria_WrongLaneTest, 2, 0);
+    layout->addWidget(criteria_OnSidewalkTest, 3, 0);
+    layout->addWidget(criteria_KeepLaneTest, 4, 0);
+    layout->addWidget(criteria_CollisionTest, 5, 0);
+    layout->addWidget(criteria_DrivenDistanceTestLabel, 6, 0);
+
+    layout->addWidget(criteria_RunningStopTestCheckBox, 0, 1);
+    layout->addWidget(criteria_RunningRedLightTestCheckBox, 1, 1);
+    layout->addWidget(criteria_WrongLaneTestCheckBox, 2, 1);
+    layout->addWidget(criteria_OnSidewalkTestCheckBox, 3, 1);
+    layout->addWidget(criteria_KeepLaneTestCheckBox, 4, 1);
+    layout->addWidget(criteria_CollisionTestCheckBox, 5, 1);
+    layout->addWidget(criteria_DrivenDistanceTestCheckBox, 6, 1);
+
+    setLayout(layout);
+}
+
+int StopTriggerPage::nextId() const
+{
+    return -1;
+}

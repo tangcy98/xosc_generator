@@ -20,7 +20,7 @@ class LicenseWizard : public QWizard
     Q_OBJECT
 public:
     enum { Page_Intro, Page_Filename, Page_Map, Page_Environment,
-           Page_Actor };
+           Page_Actor, Page_Story, Page_StopTrigger };
 
     LicenseWizard(QWidget *parent = nullptr);
 
@@ -311,6 +311,34 @@ private:
 
     QVector<ActorGroupBox*> actorGroupBox;
 
+};
+
+
+class StopTriggerPage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    StopTriggerPage(QWidget *parent = nullptr);
+
+    int nextId() const override;
+private slots:
+
+private:
+    QLabel *criteria_RunningStopTest;
+    QLabel *criteria_RunningRedLightTest;
+    QLabel *criteria_WrongLaneTest;
+    QLabel *criteria_OnSidewalkTest;
+    QLabel *criteria_KeepLaneTest;
+    QLabel *criteria_CollisionTest;
+    QLabel *criteria_DrivenDistanceTestLabel;
+
+    QCheckBox *criteria_RunningStopTestCheckBox;
+    QCheckBox *criteria_RunningRedLightTestCheckBox;
+    QCheckBox *criteria_WrongLaneTestCheckBox;
+    QCheckBox *criteria_OnSidewalkTestCheckBox;
+    QCheckBox *criteria_KeepLaneTestCheckBox;
+    QCheckBox *criteria_CollisionTestCheckBox;
+    QCheckBox *criteria_DrivenDistanceTestCheckBox;
 };
 
 #endif
