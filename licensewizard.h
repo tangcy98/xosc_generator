@@ -174,7 +174,60 @@ class VehicleGroupBox : public QGroupBox
 public:
     VehicleGroupBox(QWidget *parent = nullptr);
 private:
+    QLabel *maxSpeedLabel;
+    QLabel *maxAccelerationLabel;
+    QLabel *maxDecelerationLabel;
+    QLabel *frontAxleMaxSteeringLabel;
+    QLabel *frontAxleWheelDiameterLabel;
+    QLabel *frontAxleTrackWidthLabel;
+    QLabel *frontAxlePositionXLabel;
+    QLabel *frontAxlePositionZLabel;
+    QLabel *rearAxleMaxSteeringLabel;
+    QLabel *rearAxleWheelDiameterLabel;
+    QLabel *rearAxleTrackWidthLabel;
+    QLabel *rearAxlePositionXLabel;
+    QLabel *rearAxlePositionZLabel;
+    QLabel *controllerNameLabel;
+    QLabel *ThrottleValueLabel;
+    QLabel *ThrottleActiveLabel;
+    QLabel *BrakeValueLabel;
+    QLabel *BrakeActiveLabel;
+    QLabel *ClutchValueLabel;
+    QLabel *ClutchActiveLabel;
+    QLabel *ParkingBrakeValueLabel;
+    QLabel *ParkingBrakeActiveLabel;
+    QLabel *SteeringWheelValueLabel;
+    QLabel *SteeringWheelActiveLabel;
+    QLabel *GearNumberLabel;
+    QLabel *GearActiveLabel;
+    QLineEdit *maxSpeedLineEdit;
+    QLineEdit *maxAccelerationLineEdit;
+    QLineEdit *maxDecelerationLineEdit;
+    QLineEdit *frontAxleMaxSteeringLineEdit;
+    QLineEdit *frontAxleWheelDiameterLineEdit;
+    QLineEdit *frontAxleTrackWidthLineEdit;
+    QLineEdit *frontAxlePositionXLineEdit;
+    QLineEdit *frontAxlePositionZLineEdit;
+    QLineEdit *rearAxleMaxSteeringLineEdit;
+    QLineEdit *rearAxleWheelDiameterLineEdit;
+    QLineEdit *rearAxleTrackWidthLineEdit;
+    QLineEdit *rearAxlePositionXLineEdit;
+    QLineEdit *rearAxlePositionZLineEdit;
+    QLineEdit *controllerNameLineEdit;
+    QLineEdit *ThrottleValueLineEdit;
+    QComboBox *ThrottleActiveComboBox;
+    QLineEdit *BrakeValueLineEdit;
+    QComboBox *BrakeActiveComboBox;
+    QLineEdit *ClutchValueLineEdit;
+    QComboBox *ClutchActiveComboBox;
+    QLineEdit *ParkingBrakeValueLineEdit;
+    QComboBox *ParkingBrakeActiveComboBox;
+    QLineEdit *SteeringWheelValueLineEdit;
+    QComboBox *SteeringWheelActiveComboBox;
+    QLineEdit *GearNumberLineEdit;
+    QComboBox *GearActiveComboBox;
 
+    PropertiesGroupBox *controllerPropertiesGroupBox;
 };
 class PedestrianGroupBox : public QGroupBox
 {
@@ -209,7 +262,7 @@ private:
     QComboBox *typeComboBox;
 
     QLabel *objectnameLabel;
-    QLineEdit *objectnameComboBox;
+    QLineEdit *objectnameLineEdit;
 
     QLabel *nameLabel;
     QComboBox *nameComboBox;

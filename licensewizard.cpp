@@ -453,7 +453,6 @@ void PositionGroupBox::updatePositionType()
 
 PropertiesGroupBox::PropertiesGroupBox(QWidget *parent) : QGroupBox(parent)
 {
-    setTitle("Properties");
     propertynumberLabel = new QLabel(tr("number of properties:"));
     propertynumberComboBox = NumberQComboBox(MINPROPNUM, MAXPROPNUM);
     QGridLayout *layout = new QGridLayout;
@@ -510,15 +509,145 @@ void PropertiesGroupBox::updateProperties()
 }
 VehicleGroupBox::VehicleGroupBox(QWidget *parent) : QGroupBox(parent)
 {
+    setTitle("Vehicle Parameters");
+    controllerPropertiesGroupBox = new PropertiesGroupBox;
+    controllerPropertiesGroupBox->setTitle("Controller Properties");
+
+    maxSpeedLabel = new QLabel("maxSpeed:");
+    maxAccelerationLabel = new QLabel("maxAcceleration:");
+    maxDecelerationLabel = new QLabel("maxDeceleration:");
+    frontAxleMaxSteeringLabel = new QLabel("frontAxleMaxSteering:");
+    frontAxleWheelDiameterLabel = new QLabel("frontAxleWheelDiameter:");
+    frontAxleTrackWidthLabel = new QLabel("frontAxleTrackWidth:");
+    frontAxlePositionXLabel = new QLabel("frontAxlePositionX:");
+    frontAxlePositionZLabel = new QLabel("frontAxlePositionZ:");
+    rearAxleMaxSteeringLabel = new QLabel("rearAxleMaxSteering:");
+    rearAxleWheelDiameterLabel = new QLabel("rearAxleWheelDiameter:");
+    rearAxleTrackWidthLabel = new QLabel("rearAxleTrackWidth:");
+    rearAxlePositionXLabel = new QLabel("rearAxlePositionX:");
+    rearAxlePositionZLabel = new QLabel("rearAxlePositionZ:");
+    controllerNameLabel = new QLabel("controllerName:");
+    ThrottleValueLabel = new QLabel("ThrottleValue[0,1]:");
+    ThrottleActiveLabel = new QLabel("ThrottleActive:");
+    BrakeValueLabel = new QLabel("BrakeValue[0,1]:");
+    BrakeActiveLabel = new QLabel("BrakeActive:");
+    ClutchValueLabel = new QLabel("ClutchValue[0,1]:");
+    ClutchActiveLabel = new QLabel("ClutchActive:");
+    ParkingBrakeValueLabel = new QLabel("ParkingBrakeValue[0,1]:");
+    ParkingBrakeActiveLabel = new QLabel("ParkingBrakeActive:");
+    SteeringWheelValueLabel = new QLabel("SteeringWheelValue(rad):");
+    SteeringWheelActiveLabel = new QLabel("SteeringWheelActive:");
+    GearNumberLabel = new QLabel("GearNumber:");
+    GearActiveLabel = new QLabel("GearActive:");
+
+    maxSpeedLineEdit = new QLineEdit("69.444");
+    maxAccelerationLineEdit = new QLineEdit("200");
+    maxDecelerationLineEdit = new QLineEdit("10.0");
+    frontAxleMaxSteeringLineEdit = new QLineEdit("0.5");
+    frontAxleWheelDiameterLineEdit = new QLineEdit("0.6");
+    frontAxleTrackWidthLineEdit = new QLineEdit("1.8");
+    frontAxlePositionXLineEdit = new QLineEdit("3.1");
+    frontAxlePositionZLineEdit = new QLineEdit("0.3");
+    rearAxleMaxSteeringLineEdit = new QLineEdit("0.0");
+    rearAxleWheelDiameterLineEdit = new QLineEdit("0.6");
+    rearAxleTrackWidthLineEdit = new QLineEdit("1.8");
+    rearAxlePositionXLineEdit = new QLineEdit("0.0");
+    rearAxlePositionZLineEdit = new QLineEdit("0.3");
+    controllerNameLineEdit = new QLineEdit;
+    controllerNameLineEdit->setPlaceholderText("HeroAgent/AdversaryAgent/..");
+    ThrottleValueLineEdit = new QLineEdit("0");
+    ThrottleActiveComboBox = BooleanQComboBox(false);
+    BrakeValueLineEdit = new QLineEdit("0");
+    BrakeActiveComboBox = BooleanQComboBox(false);
+    ClutchValueLineEdit = new QLineEdit("0");
+    ClutchActiveComboBox = BooleanQComboBox(false);
+    ParkingBrakeValueLineEdit = new QLineEdit("0");
+    ParkingBrakeActiveComboBox = BooleanQComboBox(false);
+    SteeringWheelValueLineEdit = new QLineEdit("0");
+    SteeringWheelActiveComboBox = BooleanQComboBox(false);
+    GearNumberLineEdit = new QLineEdit("0");
+    GearActiveComboBox = BooleanQComboBox(false);
+
+    QGridLayout *layout = new QGridLayout;
+
+
+    layout->addWidget(maxSpeedLabel, 0, 0);
+    layout->addWidget(maxAccelerationLabel, 1, 0);
+    layout->addWidget(maxDecelerationLabel, 2, 0);
+    layout->addWidget(frontAxleMaxSteeringLabel, 3, 0);
+    layout->addWidget(frontAxleWheelDiameterLabel, 4, 0);
+    layout->addWidget(frontAxleTrackWidthLabel, 5, 0);
+    layout->addWidget(frontAxlePositionXLabel, 6, 0);
+    layout->addWidget(frontAxlePositionZLabel, 7, 0);
+    layout->addWidget(rearAxleMaxSteeringLabel, 8, 0);
+    layout->addWidget(rearAxleWheelDiameterLabel, 9, 0);
+    layout->addWidget(rearAxleTrackWidthLabel, 10, 0);
+    layout->addWidget(rearAxlePositionXLabel, 11, 0);
+    layout->addWidget(rearAxlePositionZLabel, 12, 0);
+    layout->addWidget(controllerNameLabel, 13, 0);
+    layout->addWidget(controllerPropertiesGroupBox, 14, 0, 1, 2);
+    layout->addWidget(ThrottleValueLabel, 15, 0);
+    layout->addWidget(ThrottleActiveLabel, 16, 0);
+    layout->addWidget(BrakeValueLabel, 17, 0);
+    layout->addWidget(BrakeActiveLabel, 18, 0);
+    layout->addWidget(ClutchValueLabel, 19, 0);
+    layout->addWidget(ClutchActiveLabel, 20, 0);
+    layout->addWidget(ParkingBrakeValueLabel, 21, 0);
+    layout->addWidget(ParkingBrakeActiveLabel, 22, 0);
+    layout->addWidget(SteeringWheelValueLabel, 23, 0);
+    layout->addWidget(SteeringWheelActiveLabel, 24, 0);
+    layout->addWidget(GearNumberLabel, 25, 0);
+    layout->addWidget(GearActiveLabel, 26, 0);
+
+    layout->addWidget(maxSpeedLineEdit, 0, 1);
+    layout->addWidget(maxAccelerationLineEdit, 1, 1);
+    layout->addWidget(maxDecelerationLineEdit, 2, 1);
+    layout->addWidget(frontAxleMaxSteeringLineEdit, 3, 1);
+    layout->addWidget(frontAxleWheelDiameterLineEdit, 4, 1);
+    layout->addWidget(frontAxleTrackWidthLineEdit, 5, 1);
+    layout->addWidget(frontAxlePositionXLineEdit, 6, 1);
+    layout->addWidget(frontAxlePositionZLineEdit, 7, 1);
+    layout->addWidget(rearAxleMaxSteeringLineEdit, 8, 1);
+    layout->addWidget(rearAxleWheelDiameterLineEdit, 9, 1);
+    layout->addWidget(rearAxleTrackWidthLineEdit, 10, 1);
+    layout->addWidget(rearAxlePositionXLineEdit, 11, 1);
+    layout->addWidget(rearAxlePositionZLineEdit, 12, 1);
+    layout->addWidget(controllerNameLineEdit, 13, 1);
+    layout->addWidget(ThrottleValueLineEdit, 15, 1);
+    layout->addWidget(ThrottleActiveComboBox, 16, 1);
+    layout->addWidget(BrakeValueLineEdit, 17, 1);
+    layout->addWidget(BrakeActiveComboBox, 18, 1);
+    layout->addWidget(ClutchValueLineEdit, 19, 1);
+    layout->addWidget(ClutchActiveComboBox, 20, 1);
+    layout->addWidget(ParkingBrakeValueLineEdit, 21, 1);
+    layout->addWidget(ParkingBrakeActiveComboBox, 22, 1);
+    layout->addWidget(SteeringWheelValueLineEdit, 23, 1);
+    layout->addWidget(SteeringWheelActiveComboBox, 24, 1);
+    layout->addWidget(GearNumberLineEdit, 25, 1);
+    layout->addWidget(GearActiveComboBox, 26, 1);
+
+    setLayout(layout);
 
 }
 PedestrianGroupBox::PedestrianGroupBox(QWidget *parent) : QGroupBox(parent)
 {
-
+    setTitle("Pedestrian Parameters");
+    QGridLayout *layout = new QGridLayout;
+    massLabel = new QLabel("mass(kg):");
+    massLineEdit = new QLineEdit("90.0");
+    layout->addWidget(massLabel, 0, 0);
+    layout->addWidget(massLineEdit, 0, 1);
+    setLayout(layout);
 }
 MiscObjectGroupBox::MiscObjectGroupBox(QWidget *parent) : QGroupBox(parent)
 {
-
+    setTitle("MiscObject Parameters");
+    QGridLayout *layout = new QGridLayout;
+    massLabel = new QLabel("mass(kg):");
+    massLineEdit = new QLineEdit("500.0");
+    layout->addWidget(massLabel, 0, 0);
+    layout->addWidget(massLineEdit, 0, 1);
+    setLayout(layout);
 }
 ActorGroupBox::ActorGroupBox(QWidget *parent) : QGroupBox(parent)
 {
@@ -528,28 +657,44 @@ ActorGroupBox::ActorGroupBox(QWidget *parent) : QGroupBox(parent)
     typeComboBox->addItem("Pedestrian");
     typeComboBox->addItem("MiscObject");
 
-    objectnameLabel = new QLabel(tr("objectname(hero/adversary/...):"));
-    objectnameComboBox = new QLineEdit();
+    objectnameLabel = new QLabel(tr("objectname:"));
+    objectnameLineEdit = new QLineEdit;
+    objectnameLineEdit->setPlaceholderText("hero/adversary/...");
 
     nameLabel = new QLabel(tr("name"));
     nameComboBox = new QComboBox;
+    positionGroupBox = new PositionGroupBox;
+    propertiesGroupBox = new PropertiesGroupBox;
+    vehiclegroupbox = new VehicleGroupBox;
+    pedestriangroupbox = new PedestrianGroupBox;
+    miscObjectgroupbox = new MiscObjectGroupBox;
+    propertiesGroupBox->setTitle("Properties");
     if (typeComboBox->currentText() == "Vehicle") {
         nameComboBox->clear();
         for (size_t i = 0; i < sizeof(vehname) / sizeof(const char *); ++i) {
             nameComboBox->addItem(vehname[i]);
         }
+        vehiclegroupbox->setVisible(true);
+        pedestriangroupbox->setVisible(false);
+        miscObjectgroupbox->setVisible(false);
     }
     else if (typeComboBox->currentText() == "Pedestrian") {
         nameComboBox->clear();
         for (size_t i = 0; i < sizeof(pedname) / sizeof(const char *); ++i) {
             nameComboBox->addItem(pedname[i]);
         }
+        vehiclegroupbox->setVisible(false);
+        pedestriangroupbox->setVisible(true);
+        miscObjectgroupbox->setVisible(false);
     }
     else {
         nameComboBox->clear();
         for (size_t i = 0; i < sizeof(miscname) / sizeof(const char *); ++i) {
             nameComboBox->addItem(miscname[i]);
         }
+        vehiclegroupbox->setVisible(false);
+        pedestriangroupbox->setVisible(false);
+        miscObjectgroupbox->setVisible(true);
     }
 
     connect(typeComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateName()));
@@ -590,20 +735,12 @@ ActorGroupBox::ActorGroupBox(QWidget *parent) : QGroupBox(parent)
         boundinghLineEdit->setText("1.7");
     }
 
-    
-
-    positionGroupBox = new PositionGroupBox;
-    propertiesGroupBox = new PropertiesGroupBox;
-    vehiclegroupbox = new VehicleGroupBox;
-    pedestriangroupbox = new PedestrianGroupBox;
-    miscObjectgroupbox = new MiscObjectGroupBox;
-
     QGridLayout *layout = new QGridLayout;
 
     layout->addWidget(typeLabel, 0, 0);
     layout->addWidget(typeComboBox, 0, 1);
     layout->addWidget(objectnameLabel, 1, 0);
-    layout->addWidget(objectnameComboBox, 1, 1);
+    layout->addWidget(objectnameLineEdit, 1, 1);
     layout->addWidget(nameLabel, 2, 0);
     layout->addWidget(nameComboBox, 2, 1);
     layout->addWidget(categoryLabel, 3, 0);
@@ -635,18 +772,27 @@ void ActorGroupBox::updateName()
         for (size_t i = 0; i < sizeof(vehname) / sizeof(const char *); ++i) {
             nameComboBox->addItem(vehname[i]);
         }
+        vehiclegroupbox->setVisible(true);
+        pedestriangroupbox->setVisible(false);
+        miscObjectgroupbox->setVisible(false);
     }
     else if (typeComboBox->currentText() == "Pedestrian") {
         nameComboBox->clear();
         for (size_t i = 0; i < sizeof(pedname) / sizeof(const char *); ++i) {
             nameComboBox->addItem(pedname[i]);
         }
+        vehiclegroupbox->setVisible(false);
+        pedestriangroupbox->setVisible(true);
+        miscObjectgroupbox->setVisible(false);
     }
     else {
         nameComboBox->clear();
         for (size_t i = 0; i < sizeof(miscname) / sizeof(const char *); ++i) {
             nameComboBox->addItem(miscname[i]);
         }
+        vehiclegroupbox->setVisible(false);
+        pedestriangroupbox->setVisible(false);
+        miscObjectgroupbox->setVisible(true);
     }
     if (typeComboBox->currentText() != "MiscObject") {
         boundingxLineEdit->setText("1.5");
@@ -685,7 +831,7 @@ ActorPage::ActorPage(QWidget *parent)
     for (int i = 0; i < MAXACTORNUM; ++i) {
         ActorGroupBox* box = new ActorGroupBox;
         actorGroupBox.append(box);
-        box->setTitle("actor" + QString::number(i));
+        box->setTitle("~Actor" + QString::number(i) + " Settings");
 
         layout->addWidget(box, i + 1, 0, 1, 2);
     }
