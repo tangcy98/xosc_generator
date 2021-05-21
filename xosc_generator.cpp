@@ -383,27 +383,27 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
     if (!Entities) return SET_ERROR;
     // <ScenarioObject>
     tinyxml2::XMLElement *ScenarioObject = doc->NewElement("ScenarioObject");
-    ScenarioObject->SetAttribute("name", actor->objname);
+    ScenarioObject->SetAttribute("name", actor->objname.c_str());
     tinyxml2::XMLElement *ActorElem;
 
     // <Vehicle>, <Pedestrian>, <MiscObject>
     if (actor->actortype == VEHICLE) {
         ActorElem = doc->NewElement("Vehicle");
-        ActorElem->SetAttribute("name", actor->name);
-        ActorElem->SetAttribute("vehicleCategory", actor->category);
+        ActorElem->SetAttribute("name", actor->name.c_str());
+        ActorElem->SetAttribute("vehicleCategory", actor->category.c_str());
     }
     else if (actor->actortype == PEDESTRIAN) {
         ActorElem = doc->NewElement("Pedestrian");
-        ActorElem->SetAttribute("model", actor->pedparas.model);
-        ActorElem->SetAttribute("mass", actor->pedparas.mass);
-        ActorElem->SetAttribute("name", actor->name);
-        ActorElem->SetAttribute("pedestrianCategory", actor->category);
+        ActorElem->SetAttribute("model", actor->pedparas.model.c_str());
+        ActorElem->SetAttribute("mass", actor->pedparas.mass.c_str());
+        ActorElem->SetAttribute("name", actor->name.c_str());
+        ActorElem->SetAttribute("pedestrianCategory", actor->category.c_str());
     }
     else if (actor->actortype == MISCOBJECT) {
         ActorElem = doc->NewElement("MiscObject");
-        ActorElem->SetAttribute("mass", actor->miscparas.mass);
-        ActorElem->SetAttribute("name", actor->name);
-        ActorElem->SetAttribute("miscObjectCategory", actor->category);
+        ActorElem->SetAttribute("mass", actor->miscparas.mass.c_str());
+        ActorElem->SetAttribute("name", actor->name.c_str());
+        ActorElem->SetAttribute("miscObjectCategory", actor->category.c_str());
     }
 
     // <ParameterDeclarations>
@@ -423,9 +423,9 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
     if (actor->actortype == VEHICLE) {
         // <Performance>
         tinyxml2::XMLElement *Performance = doc->NewElement("Performance");
-        Performance->SetAttribute("maxSpeed", actor->vehparas.maxSpeed);
-        Performance->SetAttribute("maxAcceleration", actor->vehparas.maxAcceleration);
-        Performance->SetAttribute("maxDeceleration", actor->vehparas.maxDeceleration);
+        Performance->SetAttribute("maxSpeed", actor->vehparas.maxSpeed.c_str());
+        Performance->SetAttribute("maxAcceleration", actor->vehparas.maxAcceleration.c_str());
+        Performance->SetAttribute("maxDeceleration", actor->vehparas.maxDeceleration.c_str());
         ActorElem->LinkEndChild(Performance);
         // </Performance>
     }
@@ -435,17 +435,17 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
 
     // <Center>
     tinyxml2::XMLElement *Center = doc->NewElement("Center");
-    Center->SetAttribute("x", actor->boundingx);
-    Center->SetAttribute("y", actor->boundingy);
-    Center->SetAttribute("z", actor->boundingz);
+    Center->SetAttribute("x", actor->boundingx.c_str());
+    Center->SetAttribute("y", actor->boundingy.c_str());
+    Center->SetAttribute("z", actor->boundingz.c_str());
     BoundingBox->LinkEndChild(Center);
     // </Center>
 
     // <Dimensions>
     tinyxml2::XMLElement *Dimensions = doc->NewElement("Dimensions");
-    Dimensions->SetAttribute("width", actor->boundingw);
-    Dimensions->SetAttribute("length", actor->boundingl);
-    Dimensions->SetAttribute("height", actor->boundingh);
+    Dimensions->SetAttribute("width", actor->boundingw.c_str());
+    Dimensions->SetAttribute("length", actor->boundingl.c_str());
+    Dimensions->SetAttribute("height", actor->boundingh.c_str());
     BoundingBox->LinkEndChild(Dimensions);
     // </Dimensions>
 
@@ -458,21 +458,21 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
 
         // <FrontAxle>
         tinyxml2::XMLElement *FrontAxle = doc->NewElement("FrontAxle");
-        FrontAxle->SetAttribute("maxSteering", actor->vehparas.frontAxleMaxSteering);
-        FrontAxle->SetAttribute("wheelDiameter", actor->vehparas.frontAxleWheelDiameter);
-        FrontAxle->SetAttribute("trackWidth", actor->vehparas.frontAxleTrackWidth);
-        FrontAxle->SetAttribute("positionX", actor->vehparas.frontAxlePositionX);
-        FrontAxle->SetAttribute("positionZ", actor->vehparas.frontAxlePositionZ);
+        FrontAxle->SetAttribute("maxSteering", actor->vehparas.frontAxleMaxSteering.c_str());
+        FrontAxle->SetAttribute("wheelDiameter", actor->vehparas.frontAxleWheelDiameter.c_str());
+        FrontAxle->SetAttribute("trackWidth", actor->vehparas.frontAxleTrackWidth.c_str());
+        FrontAxle->SetAttribute("positionX", actor->vehparas.frontAxlePositionX.c_str());
+        FrontAxle->SetAttribute("positionZ", actor->vehparas.frontAxlePositionZ.c_str());
         Axles->LinkEndChild(FrontAxle);
         // </FrontAxle>
 
         // <RearAxle>
         tinyxml2::XMLElement *RearAxle = doc->NewElement("RearAxle");
-        RearAxle->SetAttribute("maxSteering", actor->vehparas.rearAxleMaxSteering);
-        RearAxle->SetAttribute("wheelDiameter", actor->vehparas.rearAxleWheelDiameter);
-        RearAxle->SetAttribute("trackWidth", actor->vehparas.rearAxleTrackWidth);
-        RearAxle->SetAttribute("positionX", actor->vehparas.rearAxlePositionX);
-        RearAxle->SetAttribute("positionZ", actor->vehparas.rearAxlePositionZ);
+        RearAxle->SetAttribute("maxSteering", actor->vehparas.rearAxleMaxSteering.c_str());
+        RearAxle->SetAttribute("wheelDiameter", actor->vehparas.rearAxleWheelDiameter.c_str());
+        RearAxle->SetAttribute("trackWidth", actor->vehparas.rearAxleTrackWidth.c_str());
+        RearAxle->SetAttribute("positionX", actor->vehparas.rearAxlePositionX.c_str());
+        RearAxle->SetAttribute("positionZ", actor->vehparas.rearAxlePositionZ.c_str());
         Axles->LinkEndChild(RearAxle);
         // </RearAxle>
         
@@ -486,8 +486,8 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
     for (auto iter = actor->props.begin(); iter != actor->props.end(); iter++) {
         // <Property>
         tinyxml2::XMLElement *Property = doc->NewElement("Property");
-        Property->SetAttribute("name", iter->first);
-        Property->SetAttribute("value", iter->second);
+        Property->SetAttribute("name", iter->first.c_str());
+        Property->SetAttribute("value", iter->second.c_str());
         Properties->LinkEndChild(Property);
         // </Property>
     }
@@ -511,7 +511,7 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
 
     // <Private>
     tinyxml2::XMLElement *Private = doc->NewElement("Private");
-    Private->SetAttribute("entityRef", actor->objname);
+    Private->SetAttribute("entityRef", actor->objname.c_str());
 
     // <PrivateAction>
     tinyxml2::XMLElement *PrivateAction = doc->NewElement("PrivateAction");
@@ -564,15 +564,15 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
 
         // <Controller>
         tinyxml2::XMLElement *Controller = doc ->NewElement("Controller");
-        Controller->SetAttribute("name", actor->vehparas.controllerName);
+        Controller->SetAttribute("name", actor->vehparas.controllerName.c_str());
 
         // <Properties>
         tinyxml2::XMLElement *Properties = doc ->NewElement("Properties");
         for (auto iter = actor->vehparas.controllerprops.begin(); iter != actor->vehparas.controllerprops.end(); iter++) {
             // <Property>
             tinyxml2::XMLElement *Property = doc->NewElement("Property");
-            Property->SetAttribute("name", iter->first);
-            Property->SetAttribute("value", iter->second);
+            Property->SetAttribute("name", iter->first.c_str());
+            Property->SetAttribute("value", iter->second.c_str());
             Properties->LinkEndChild(Property);
             // </Property>
         }
@@ -596,18 +596,18 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
         tinyxml2::XMLElement *SteeringWheel = doc->NewElement("SteeringWheel");
         tinyxml2::XMLElement *Gear = doc->NewElement("Gear");
 
-        Throttle->SetAttribute("value", actor->vehparas.Throttle.first);
-        Throttle->SetAttribute("active", actor->vehparas.Throttle.second);
-        Brake->SetAttribute("value", actor->vehparas.Brake.first);
-        Brake->SetAttribute("active", actor->vehparas.Brake.second);
-        Clutch->SetAttribute("value", actor->vehparas.Clutch.first);
-        Clutch->SetAttribute("active", actor->vehparas.Clutch.second);
-        ParkingBrake->SetAttribute("value", actor->vehparas.ParkingBrake.first);
-        ParkingBrake->SetAttribute("active", actor->vehparas.ParkingBrake.second);
-        SteeringWheel->SetAttribute("value", actor->vehparas.SteeringWheel.first);
-        SteeringWheel->SetAttribute("active", actor->vehparas.SteeringWheel.second);
-        Gear->SetAttribute("number", actor->vehparas.Gear.first);
-        Gear->SetAttribute("active", actor->vehparas.Gear.second);
+        Throttle->SetAttribute("value", actor->vehparas.Throttle.first.c_str());
+        Throttle->SetAttribute("active", actor->vehparas.Throttle.second.c_str());
+        Brake->SetAttribute("value", actor->vehparas.Brake.first.c_str());
+        Brake->SetAttribute("active", actor->vehparas.Brake.second.c_str());
+        Clutch->SetAttribute("value", actor->vehparas.Clutch.first.c_str());
+        Clutch->SetAttribute("active", actor->vehparas.Clutch.second.c_str());
+        ParkingBrake->SetAttribute("value", actor->vehparas.ParkingBrake.first.c_str());
+        ParkingBrake->SetAttribute("active", actor->vehparas.ParkingBrake.second.c_str());
+        SteeringWheel->SetAttribute("value", actor->vehparas.SteeringWheel.first.c_str());
+        SteeringWheel->SetAttribute("active", actor->vehparas.SteeringWheel.second.c_str());
+        Gear->SetAttribute("number", actor->vehparas.Gear.first.c_str());
+        Gear->SetAttribute("active", actor->vehparas.Gear.second.c_str());
 
         OverrideControllerValueAction->LinkEndChild(Throttle);
         OverrideControllerValueAction->LinkEndChild(Brake);

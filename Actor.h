@@ -15,98 +15,84 @@ enum ACTORTYPE {
 struct Vehicle {
 
     // <Performance>
-    const char *maxSpeed;
-    const char *maxAcceleration;
-    const char *maxDeceleration;
+    std::string maxSpeed;
+    std::string maxAcceleration;
+    std::string maxDeceleration;
 
     // <Axles> - <FrontAxle>
-    const char *frontAxleMaxSteering;
-    const char *frontAxleWheelDiameter;
-    const char *frontAxleTrackWidth;
-    const char *frontAxlePositionX;
-    const char *frontAxlePositionZ;
+    std::string frontAxleMaxSteering;
+    std::string frontAxleWheelDiameter;
+    std::string frontAxleTrackWidth;
+    std::string frontAxlePositionX;
+    std::string frontAxlePositionZ;
     
     // <Axles> - <RearAxle>
-    const char *rearAxleMaxSteering;
-    const char *rearAxleWheelDiameter;
-    const char *rearAxleTrackWidth;
-    const char *rearAxlePositionX;
-    const char *rearAxlePositionZ;
+    std::string rearAxleMaxSteering;
+    std::string rearAxleWheelDiameter;
+    std::string rearAxleTrackWidth;
+    std::string rearAxlePositionX;
+    std::string rearAxlePositionZ;
 
     // <Controller>
-    const char *controllerName;
+    std::string controllerName;
 
     // <Controller> - <Properties>
-    vector< pair<const char*, const char*> > controllerprops;
+    vector< pair<std::string , std::string > > controllerprops;
 
     // <OverrideControllerValueAction>
-    pair<const char*, const char*> Throttle;
-    pair<const char*, const char*> Brake;
-    pair<const char*, const char*> Clutch;
-    pair<const char*, const char*> ParkingBrake;
-    pair<const char*, const char*> SteeringWheel;
-    pair<const char*, const char*> Gear;
+    pair<std::string , std::string > Throttle;
+    pair<std::string , std::string > Brake;
+    pair<std::string , std::string > Clutch;
+    pair<std::string , std::string > ParkingBrake;
+    pair<std::string , std::string > SteeringWheel;
+    pair<std::string , std::string > Gear;
 };
 
 struct Pedestrian {
     // <Pedestrian>
-    const char *model;
-    const char *mass;
+    std::string model;
+    std::string mass;
 };
 
 struct MiscObject {
     // <MiscObject>
-    const char *mass;
+    std::string mass;
 };
 
 struct Actor {
     ACTORTYPE actortype;
     /* data */
     // <ScenarioObject>
-    const char *objname;
+    std::string objname;
 
     // <Vehicle>, <Pedestrian>, <MiscObject>
-    const char *name;
-    const char *category;
+    std::string name;
+    std::string category;
 
     // <ParameterDeclarations>
     vector< Parameter > paras;
 
     // <BoundingBox> - <Center>
-    const char *boundingx;
-    const char *boundingy;
-    const char *boundingz;
+    std::string boundingx;
+    std::string boundingy;
+    std::string boundingz;
 
     // <BoundingBox> - <Dimensions>
-    const char *boundingw;
-    const char *boundingl;
-    const char *boundingh;
+    std::string boundingw;
+    std::string boundingl;
+    std::string boundingh;
 
     // <Position>
     Position position;
 
     // <Properties>
-    vector< pair<const char*, const char*> > props;
+    vector< pair<std::string , std::string > > props;
 
     Vehicle vehparas;
     Pedestrian pedparas;
     MiscObject miscparas;
 
     // Actor();
-    ~Actor();
-    SETRES setType(ACTORTYPE type);
-    SETRES setObjName(const char *str);
-    SETRES setName(const char *str);
-    SETRES setCategory(const char *str);
-    SETRES addPara(Parameter para);
-    SETRES setBoundingBoxCenter(const char *x, const char *y, const char *z);
-    SETRES setBoundingBoxDimensions(const char *w, const char *l, const char *h);
-    SETRES setWorldPosition(WorldPosition pos);
-    SETRES setLanePosition(LanePosition pos);
-    SETRES addProp(pair<const char*, const char*> prop);
-    SETRES setVehicle(Vehicle *v);
-    SETRES setPedestrian(Pedestrian *p);
-    SETRES setMiscObject(MiscObject *m);
 };
 
 
