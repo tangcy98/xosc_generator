@@ -24,6 +24,10 @@ public:
 
     LicenseWizard(QWidget *parent = nullptr);
     void accept() override;
+    Environment getEnvironment();
+    Actor getActor(int n);
+    Story getStory();
+    StopTrigger getStopTrigger();
 
 private slots:
     void showHelp();
@@ -332,6 +336,7 @@ private:
     QLabel *criteria_KeepLaneTest;
     QLabel *criteria_CollisionTest;
     QLabel *criteria_DrivenDistanceTestLabel;
+    QLabel *DrivenDistanceLabel;
 
     QCheckBox *criteria_RunningStopTestCheckBox;
     QCheckBox *criteria_RunningRedLightTestCheckBox;
@@ -340,6 +345,7 @@ private:
     QCheckBox *criteria_KeepLaneTestCheckBox;
     QCheckBox *criteria_CollisionTestCheckBox;
     QCheckBox *criteria_DrivenDistanceTestCheckBox;
+    QLineEdit *DrivenDistanceLineEdit;
 };
 
 #endif

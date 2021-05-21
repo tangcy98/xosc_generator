@@ -173,14 +173,90 @@ void LicenseWizard::accept()
     XOSC xosc;
     xosc.initXML();
 
-    string filename = field("filename.filename").toString().toStdString();
+    // begin - Filename
+    string filename = field("Filename.filename").toString().toStdString();
     xosc.setFilename(filename.c_str());
+    // end - Filename
 
+    // begin - Map
     string map = field("Map.name").toString().toStdString();
     xosc.setMap(map.c_str());
+    // end - Map
 
+    // begin - Environment
+    string name = field("Environment.name").toString().toStdString();
+    string animation = field("Environment.animation").toString().toStdString();
+    string dateTime = field("Environment.dateTime").toString().toStdString();
+    string cloudState = field("Environment.cloudState").toString().toStdString();
+    string sunintensity = field("Environment.sunintensity").toString().toStdString();
+    string azimuth = field("Environment.azimuth").toString().toStdString();
+    string elevation = field("Environment.elevation").toString().toStdString();
+    string visualRange = field("Environment.visualRange").toString().toStdString();
+    string precipitationType = field("Environment.precipitationType").toString().toStdString();
+    string precipitationintensity = field("Environment.precipitationintensity").toString().toStdString();
+    string frictionScaleFactor = field("Environment.frictionScaleFactor").toString().toStdString();
+    Environment environment(
+      name.c_str(),
+      animation.c_str(),
+      dateTime.c_str(),
+      cloudState.c_str(),
+      sunintensity.c_str(),
+      azimuth.c_str(),
+      elevation.c_str(),
+      visualRange.c_str(),
+      precipitationType.c_str(),
+      precipitationintensity.c_str(),
+      frictionScaleFactor.c_str()
+    );
+    xosc.setEnvironment(&environment);
+    // end - Environment
+
+    // begin - Actor
+    int actornum = field("Actor.num").toString().toInt();
+    xosc.setActorNum(actornum);
     
+    for (int i = 0; i < actornum; ++i) {
+
+    }
+    // end - Actor
+
+    // begin - Story
+
+    // end - Story
+
+    // begin - StopTrigger
+    string DrivenDistance = field("StopTrigger.DrivenDistanceLineEdit").toString().toStdString();
+    StopTrigger stoptrigger(
+        field("StopTrigger.criteria_RunningStopTestCheckBox").toBool(),
+        field("StopTrigger.criteria_RunningRedLightTestCheckBox").toBool(),
+        field("StopTrigger.criteria_WrongLaneTestCheckBox").toBool(),
+        field("StopTrigger.criteria_OnSidewalkTestCheckBox").toBool(),
+        field("StopTrigger.criteria_KeepLaneTestCheckBox").toBool(),
+        field("StopTrigger.criteria_CollisionTestCheckBox").toBool(),
+        field("StopTrigger.criteria_DrivenDistanceTestCheckBox").toBool(),
+        DrivenDistance.c_str()
+    );
+    xosc.setStopTrigger(&stoptrigger);
+    // end - StopTrigger
+
     QDialog::accept();
+}
+
+Environment getEnvironment()
+{
+
+}
+Actor getActor(int n)
+{
+
+}
+Story getStory()
+{
+
+}
+StopTrigger getStopTrigger()
+{
+
 }
 
 IntroPage::IntroPage(QWidget *parent)
@@ -214,7 +290,7 @@ FilenamePage::FilenamePage(QWidget *parent)
     filenameLineEdit = new QLineEdit;
     filenameExampleLabel = new QLabel(tr("(Example: FollowLeadingVehicle.xosc)"));
 
-    registerField("filename.filename*", filenameLineEdit);
+    registerField("Filename.filename*", filenameLineEdit);
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(filenameLabel, 0, 0);
@@ -334,10 +410,6 @@ EnvironmentPage::EnvironmentPage(QWidget *parent)
     frictionScaleFactorLineEdit->setValidator(new QDoubleValidator(this));
     frictionScaleFactorLabel->setBuddy(frictionScaleFactorLineEdit);
 
-    // registerField("details.company*", companyLineEdit);
-    // registerField("details.email*", emailLineEdit);
-    // registerField("details.postal*", postalLineEdit);
-
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(nameLabel, 0, 0);
     layout->addWidget(animationLabel, 1, 0);
@@ -363,17 +435,17 @@ EnvironmentPage::EnvironmentPage(QWidget *parent)
     layout->addWidget(precipitationintensityLineEdit, 9, 1);
     layout->addWidget(frictionScaleFactorLineEdit, 10, 1);
 
-    registerField("environment.name", nameLineEdit);
-    registerField("environment.animation", animationComboBox);
-    registerField("environment.dateTime", dateTimeLineEdit);
-    registerField("environment.cloudState", cloudStateComboBox);
-    registerField("environment.sunintensity", sunintensityLineEdit);
-    registerField("environment.azimuth", azimuthLineEdit);
-    registerField("environment.elevation", elevationLineEdit);
-    registerField("environment.visualRange", visualRangeLineEdit);
-    registerField("environment.precipitationType", precipitationTypeComboBox);
-    registerField("environment.precipitationintensity", precipitationintensityLineEdit);
-    registerField("environment.frictionScaleFactor", frictionScaleFactorLineEdit);
+    registerField("Environment.name", nameLineEdit);
+    registerField("Environment.animation", animationComboBox);
+    registerField("Environment.dateTime", dateTimeLineEdit);
+    registerField("Environment.cloudState", cloudStateComboBox);
+    registerField("Environment.sunintensity", sunintensityLineEdit);
+    registerField("Environment.azimuth", azimuthLineEdit);
+    registerField("Environment.elevation", elevationLineEdit);
+    registerField("Environment.visualRange", visualRangeLineEdit);
+    registerField("Environment.precipitationType", precipitationTypeComboBox);
+    registerField("Environment.precipitationintensity", precipitationintensityLineEdit);
+    registerField("Environment.frictionScaleFactor", frictionScaleFactorLineEdit);
 
     setLayout(layout);
 }
@@ -476,7 +548,7 @@ PropertiesGroupBox::PropertiesGroupBox(QWidget *parent) : QGroupBox(parent)
     layout->addWidget(propertynumberComboBox, 0, 1);
     connect(propertynumberComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateProperties()));
     int currentnum = propertynumberComboBox->currentText().toInt();
-    for (int i = 0; i < MAXACTORNUM; ++i) {
+    for (int i = 0; i < MAXPROPNUM; ++i) {
         QLabel *nameLabel = new QLabel("property" + QString::number(i) + " name:");
         QLabel *valueLabel = new QLabel("property" + QString::number(i) + " value:");;
         QLineEdit *nameLineEdit = new QLineEdit;
@@ -508,7 +580,7 @@ PropertiesGroupBox::PropertiesGroupBox(QWidget *parent) : QGroupBox(parent)
 void PropertiesGroupBox::updateProperties()
 {
     int currentnum = propertynumberComboBox->currentText().toInt();
-    for (int i = 0; i < MAXACTORNUM; ++i) {
+    for (int i = 0; i < MAXPROPNUM; ++i) {
         if (i < currentnum) {
             propertynameLabel[i]->setVisible(true);
             propertynameLineEdit[i]->setVisible(true);
@@ -840,6 +912,7 @@ ActorPage::ActorPage(QWidget *parent)
 
     actornumLabel = new QLabel("The number of actor(s):");
     actornumComboBox = NumberQComboBox(2, MAXACTORNUM);
+    registerField("Actor.num", actornumComboBox);
     QGridLayout *layout = new QGridLayout;
     connect(actornumComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateActorPage()));
     layout->addWidget(actornumLabel, 0, 0);
@@ -895,6 +968,7 @@ StopTriggerPage::StopTriggerPage(QWidget *parent)
     criteria_KeepLaneTest = new QLabel("criteria_KeepLaneTest(recommended)");
     criteria_CollisionTest = new QLabel("criteria_CollisionTest(recommended)");
     criteria_DrivenDistanceTestLabel = new QLabel("criteria_DrivenDistanceTest(recommended)");
+    DrivenDistanceLabel = new QLabel("DrivenDistance");
 
     criteria_RunningStopTestCheckBox = new QCheckBox;
     criteria_RunningStopTestCheckBox->setCheckState(Qt::Checked);
@@ -910,6 +984,7 @@ StopTriggerPage::StopTriggerPage(QWidget *parent)
     criteria_CollisionTestCheckBox->setCheckState(Qt::Checked);
     criteria_DrivenDistanceTestCheckBox = new QCheckBox;
     criteria_DrivenDistanceTestCheckBox->setCheckState(Qt::Checked);
+    DrivenDistanceLineEdit = new QLineEdit("100");
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(criteria_RunningStopTest, 0, 0);
@@ -919,6 +994,7 @@ StopTriggerPage::StopTriggerPage(QWidget *parent)
     layout->addWidget(criteria_KeepLaneTest, 4, 0);
     layout->addWidget(criteria_CollisionTest, 5, 0);
     layout->addWidget(criteria_DrivenDistanceTestLabel, 6, 0);
+    layout->addWidget(DrivenDistanceLabel, 7, 0);
 
     layout->addWidget(criteria_RunningStopTestCheckBox, 0, 1);
     layout->addWidget(criteria_RunningRedLightTestCheckBox, 1, 1);
@@ -927,6 +1003,16 @@ StopTriggerPage::StopTriggerPage(QWidget *parent)
     layout->addWidget(criteria_KeepLaneTestCheckBox, 4, 1);
     layout->addWidget(criteria_CollisionTestCheckBox, 5, 1);
     layout->addWidget(criteria_DrivenDistanceTestCheckBox, 6, 1);
+    layout->addWidget(DrivenDistanceLineEdit, 7, 1);
+
+    registerField("StopTrigger.criteria_RunningStopTestCheckBox", criteria_RunningStopTestCheckBox);
+    registerField("StopTrigger.criteria_RunningRedLightTestCheckBox", criteria_RunningRedLightTestCheckBox);
+    registerField("StopTrigger.criteria_WrongLaneTestCheckBox", criteria_WrongLaneTestCheckBox);
+    registerField("StopTrigger.criteria_OnSidewalkTestCheckBox", criteria_OnSidewalkTestCheckBox);
+    registerField("StopTrigger.criteria_KeepLaneTestCheckBox", criteria_KeepLaneTestCheckBox);
+    registerField("StopTrigger.criteria_CollisionTestCheckBox", criteria_CollisionTestCheckBox);
+    registerField("StopTrigger.criteria_DrivenDistanceTestCheckBox", criteria_DrivenDistanceTestCheckBox);
+    registerField("StopTrigger.DrivenDistanceLineEdit", DrivenDistanceLineEdit);
 
     setLayout(layout);
 }

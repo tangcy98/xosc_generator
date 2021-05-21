@@ -235,17 +235,20 @@ XOSC::XOSC()
     doc = NULL;
     OpenSCENARIO = NULL;
     actornum = 0;
+    saveflag = false;
 
     // environment, stopTrigger is already constructed;
 }
 
 XOSC::~XOSC()
 {
-	if (tinyxml2::XML_SUCCESS != doc->SaveFile(savepath)) {
-        printf("Save failed..\n");
-    }
-    else {
-        printf("Save succeed!\n");
+    if (!saveflag) {
+        if (tinyxml2::XML_SUCCESS != doc->SaveFile(savepath)) {
+            printf("Save failed..\n");
+        }
+        else {
+            printf("Save succeed!\n");
+        }
     }
     delete doc;
 }
@@ -1179,6 +1182,7 @@ bool XOSC::saveXOSC()
     if (tinyxml2::XML_SUCCESS != doc->SaveFile(savepath)) {
         return false;
     }
+    saveflag = true;
     return true;
 }
 
