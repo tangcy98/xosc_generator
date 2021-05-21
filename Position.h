@@ -7,17 +7,17 @@ enum POSITIONTYPE {
 };
 
 struct WorldPosition {
-    const char *x;
-    const char *y;
-    const char *z;
-    const char *h;
+    std::string x;
+    std::string y;
+    std::string z;
+    std::string h;
 };
 
 struct LanePosition {
-    const char *roadId;
-    const char *laneId;
-    const char *offset;
-    const char *s;
+    std::string roadId;
+    std::string laneId;
+    std::string offset;
+    std::string s;
 };
 
 struct Position {

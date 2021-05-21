@@ -184,37 +184,25 @@ void LicenseWizard::accept()
     // end - Map
 
     // begin - Environment
-    string name = field("Environment.name").toString().toStdString();
-    string animation = field("Environment.animation").toString().toStdString();
-    string dateTime = field("Environment.dateTime").toString().toStdString();
-    string cloudState = field("Environment.cloudState").toString().toStdString();
-    string sunintensity = field("Environment.sunintensity").toString().toStdString();
-    string azimuth = field("Environment.azimuth").toString().toStdString();
-    string elevation = field("Environment.elevation").toString().toStdString();
-    string visualRange = field("Environment.visualRange").toString().toStdString();
-    string precipitationType = field("Environment.precipitationType").toString().toStdString();
-    string precipitationintensity = field("Environment.precipitationintensity").toString().toStdString();
-    string frictionScaleFactor = field("Environment.frictionScaleFactor").toString().toStdString();
-    Environment environment(
-      name.c_str(),
-      animation.c_str(),
-      dateTime.c_str(),
-      cloudState.c_str(),
-      sunintensity.c_str(),
-      azimuth.c_str(),
-      elevation.c_str(),
-      visualRange.c_str(),
-      precipitationType.c_str(),
-      precipitationintensity.c_str(),
-      frictionScaleFactor.c_str()
-    );
-    xosc.setEnvironment(&environment);
+    Environment env;
+    env.name = field("Environment.name").toString().toStdString();
+    env.animation = field("Environment.animation").toString().toStdString();
+    env.dateTime = field("Environment.dateTime").toString().toStdString();
+    env.cloudState = field("Environment.cloudState").toString().toStdString();
+    env.sunintensity = field("Environment.sunintensity").toString().toStdString();
+    env.azimuth = field("Environment.azimuth").toString().toStdString();
+    env.elevation = field("Environment.elevation").toString().toStdString();
+    env.visualRange = field("Environment.visualRange").toString().toStdString();
+    env.precipitationType = field("Environment.precipitationType").toString().toStdString();
+    env.precipitationintensity = field("Environment.precipitationintensity").toString().toStdString();
+    env.frictionScaleFactor = field("Environment.frictionScaleFactor").toString().toStdString();
+    xosc.setEnvironment(&env);
     // end - Environment
 
     // begin - Actor
     int actornum = field("Actor.num").toString().toInt();
     xosc.setActorNum(actornum);
-    
+
     for (int i = 0; i < actornum; ++i) {
 
     }
