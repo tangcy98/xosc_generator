@@ -15,6 +15,7 @@ QT_END_NAMESPACE
 
 // static QComboBox* BooleanQComboBox(bool defaultopt = true);
 
+
 class LicenseWizard : public QWizard
 {
     Q_OBJECT
@@ -24,10 +25,6 @@ public:
 
     LicenseWizard(QWidget *parent = nullptr);
     void accept() override;
-    Environment getEnvironment();
-    Actor getActor(int n);
-    Story getStory();
-    StopTrigger getStopTrigger();
 
 private slots:
     void showHelp();
@@ -53,6 +50,7 @@ public:
     int nextId() const override;
 
 private:
+    QString fieldprefix;
     QLabel *filenameLabel;
     QLineEdit *filenameLineEdit;
     QLabel *filenameExampleLabel;
@@ -67,6 +65,7 @@ public:
     int nextId() const override;
 
 private:
+    QString fieldprefix;
     QLabel *nameLabel;
     QComboBox *nameComboBox;
 };
@@ -80,6 +79,7 @@ public:
     int nextId() const override;
 
 private:
+    QString fieldprefix;
     QLabel *nameLabel;
     QLabel *animationLabel;
     QLabel *dateTimeLabel;
@@ -105,19 +105,33 @@ private:
     QLineEdit *frictionScaleFactorLineEdit;
 };
 
-#define MINACTORNUM 1
+#define MINACTORNUM 0
 #define MAXACTORNUM 10
 #define MINPARANUM 0
 #define MAXPARANUM 10
 #define MINPROPNUM 0
 #define MAXPROPNUM 10
 
-class WorldPositionGroupBox : public QGroupBox
+class XOSCGroupBox : public QGroupBox
 {
     Q_OBJECT
 public:
-    WorldPositionGroupBox(QWidget *parent = nullptr);
+    XOSCGroupBox(QString str, QWidget *parent = nullptr);
+protected:
+    void registerField(QString str, QWidget *widget,const char *property = nullptr);
+    
+protected:
+    QString fieldprefix;
+};
+
+class WorldPositionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    WorldPositionGroupBox(QString str, QWidget *parent = nullptr);
+    
 private:
+    // QString fieldprefix;
     QLabel *xLabel;
     QLineEdit *xLineEdit;
     QLabel *yLabel;
@@ -127,12 +141,13 @@ private:
     QLabel *hLabel;
     QLineEdit *hLineEdit;
 };
-class LanePositionGroupBox : public QGroupBox
+class LanePositionGroupBox : public XOSCGroupBox
 {
     Q_OBJECT
 public:
-    LanePositionGroupBox(QWidget *parent = nullptr);
+    LanePositionGroupBox(QString str, QWidget *parent = nullptr);
 private:
+    // QString fieldprefix;
     QLabel *roadIdLabel;
     QLineEdit *roadIdLineEdit;
     QLabel *laneIdLabel;
@@ -142,14 +157,15 @@ private:
     QLabel *sLabel;
     QLineEdit *sLineEdit;
 };
-class PositionGroupBox : public QGroupBox
+class PositionGroupBox : public XOSCGroupBox
 {
     Q_OBJECT
 public:
-    PositionGroupBox(QWidget *parent = nullptr);
+    PositionGroupBox(QString str, QWidget *parent = nullptr);
 private slots:
     void updatePositionType();
 private:
+    // QString fieldprefix;
     QLabel *typeLabel;
     QComboBox *typeComboBox;
 
@@ -157,14 +173,15 @@ private:
     LanePositionGroupBox  *lanePositionGroupBox;
 };
 
-class PropertiesGroupBox : public QGroupBox
+class PropertiesGroupBox : public XOSCGroupBox
 {
     Q_OBJECT
 public:
-    PropertiesGroupBox(QWidget *parent = nullptr);
+    PropertiesGroupBox(QString str, QWidget *parent = nullptr);
 private slots:
     void updateProperties();
 private:
+    // QString fieldprefix;
     QLabel *propertynumberLabel;
     QComboBox *propertynumberComboBox;
 
@@ -173,12 +190,13 @@ private:
     QVector<QLabel *> propertyvalueLabel;
     QVector<QLineEdit *> propertyvalueLineEdit;
 };
-class VehicleGroupBox : public QGroupBox
+class VehicleGroupBox : public XOSCGroupBox
 {
     Q_OBJECT
 public:
-    VehicleGroupBox(QWidget *parent = nullptr);
+    VehicleGroupBox(QString str, QWidget *parent = nullptr);
 private:
+    // QString fieldprefix;
     QLabel *maxSpeedLabel;
     QLabel *maxAccelerationLabel;
     QLabel *maxDecelerationLabel;
@@ -234,35 +252,37 @@ private:
 
     PropertiesGroupBox *controllerPropertiesGroupBox;
 };
-class PedestrianGroupBox : public QGroupBox
+class PedestrianGroupBox : public XOSCGroupBox
 {
     Q_OBJECT
 public:
-    PedestrianGroupBox(QWidget *parent = nullptr);
+    PedestrianGroupBox(QString str, QWidget *parent = nullptr);
 private:
+    // QString fieldprefix;
     QLabel *massLabel;
     QLineEdit *massLineEdit;
 };
-class MiscObjectGroupBox : public QGroupBox
+class MiscObjectGroupBox : public XOSCGroupBox
 {
     Q_OBJECT
 public:
-    MiscObjectGroupBox(QWidget *parent = nullptr);
+    MiscObjectGroupBox(QString str, QWidget *parent = nullptr);
 private:
+    // QString fieldprefix;
     QLabel *massLabel;
     QLineEdit *massLineEdit;
 };
 
 
-class ActorGroupBox : public QGroupBox
+class ActorGroupBox : public XOSCGroupBox
 {
     Q_OBJECT
 public:
-    ActorGroupBox(QWidget *parent = nullptr);
+    ActorGroupBox(QString str, QWidget *parent = nullptr);
 private slots:
     void updateName();
 private:
-
+    // QString fieldprefix;
     QLabel *typeLabel;
     QComboBox *typeComboBox;
 
@@ -311,6 +331,7 @@ private slots:
     void updateActorPage();
 
 private:
+    QString fieldprefix;
     QLabel *actornumLabel;
     QComboBox *actornumComboBox;
 
@@ -329,6 +350,7 @@ public:
 private slots:
 
 private:
+    QString fieldprefix;
     QLabel *criteria_RunningStopTest;
     QLabel *criteria_RunningRedLightTest;
     QLabel *criteria_WrongLaneTest;

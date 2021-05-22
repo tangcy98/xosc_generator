@@ -1,7 +1,9 @@
 #include "licensewizard.h"
 #include <QtWidgets>
 
-
+static QVector< QString >  childfieldname;
+static QVector< QWidget* >  childfieldwidget;
+static QVector< const char * >  childfieldproperty;
 static const char * vehname[] = {
     "vehicle.lincoln.mkz2017",
     "vehicle.tesla.model3",
@@ -88,6 +90,7 @@ static QComboBox* NumberQComboBox(int bottom, int top)
     if (bottom >= top) return box;
     for (int i = bottom; i < top; ++i) {
         box->addItem(QString::number(i));
+        box->setItemData(i, QVariant(i));
     }
     return box;
 }
@@ -200,11 +203,93 @@ void LicenseWizard::accept()
     // end - Environment
 
     // begin - Actor
-    int actornum = field("Actor.num").toString().toInt();
+    int actornum = field("Actor.num").toInt();
     xosc.setActorNum(actornum);
+    QVector< Actor > actors(actornum);
 
     for (int i = 0; i < actornum; ++i) {
+        QString prefix = "Actor.Actor"+QString::number(i)+".";
+        QString type = field(prefix+"type").toString();
+        if (type == "Vehicle") {
+            actors[i].actortype = VEHICLE;
+        }
+        else if (type == "Pedestrian") {
+            actors[i].actortype = PEDESTRIAN;
+        }
+        else {
+            actors[i].actortype = MISCOBJECT;
+        }
+        actors[i].objname = field(prefix+"objectname").toString().toStdString();
+        actors[i].name = field(prefix+"name").toString().toStdString();
+        actors[i].category = field(prefix+"category").toString().toStdString();
+        actors[i].boundingx = field(prefix+"boundingx").toString().toStdString();
+        actors[i].boundingy = field(prefix+"boundingy").toString().toStdString();
+        actors[i].boundingz = field(prefix+"boundingz").toString().toStdString();
+        actors[i].boundingw = field(prefix+"boundingw").toString().toStdString();
+        actors[i].boundingl = field(prefix+"boundingl").toString().toStdString();
+        actors[i].boundingh = field(prefix+"boundingh").toString().toStdString();
+        
+        
+        type = field(prefix+"Position.type").toString();
+        if (type == "WorldPosition") {
+            actors[i].position.positiontype = WORLD;
+        }
+        else {
+            actors[i].position.positiontype = LANE;
+        }
+        actors[i].position.worldPosition.x = field(prefix+"Position.WorldPostion.x").toString().toStdString();
+        actors[i].position.worldPosition.y = field(prefix+"Position.WorldPostion.y").toString().toStdString();
+        actors[i].position.worldPosition.z = field(prefix+"Position.WorldPostion.z").toString().toStdString();
+        actors[i].position.worldPosition.h = field(prefix+"Position.WorldPostion.h").toString().toStdString();
+        actors[i].position.lanePosition.laneId = field(prefix+"Position.LanePosition.laneId").toString().toStdString();
+        actors[i].position.lanePosition.roadId = field(prefix+"Position.LanePosition.roadId").toString().toStdString();
+        actors[i].position.lanePosition.offset = field(prefix+"Position.LanePosition.offset").toString().toStdString();
+        actors[i].position.lanePosition.s = field(prefix+"Position.LanePosition.s").toString().toStdString();
 
+        int propsnum = field(prefix+"Properties.propertynumber").toInt();
+        QString propprefix = prefix + "Properties.property";
+        for (int j = 0; j < propsnum; ++j) {
+            string name = field(propprefix+QString::number(j)+".name").toString().toStdString();
+            string value = field(propprefix+QString::number(j)+".value").toString().toStdString();
+            actors[i].props.push_back(make_pair(name, value));
+        }
+
+        QString vehprefix = prefix+"Vehicle.";
+        
+        actors[i].vehparas.maxSpeed = field(vehprefix+"maxSpeed").toString().toStdString();
+        actors[i].vehparas.maxAcceleration = field(vehprefix+"maxAcceleration").toString().toStdString();
+        actors[i].vehparas.maxDeceleration = field(vehprefix+"maxDeceleration").toString().toStdString();
+        actors[i].vehparas.frontAxleMaxSteering = field(vehprefix+"frontAxleMaxSteering").toString().toStdString();
+        actors[i].vehparas.frontAxleWheelDiameter = field(vehprefix+"frontAxleWheelDiameter").toString().toStdString();
+        actors[i].vehparas.frontAxleTrackWidth = field(vehprefix+"frontAxleTrackWidth").toString().toStdString();
+        actors[i].vehparas.frontAxlePositionX = field(vehprefix+"frontAxlePositionX").toString().toStdString();
+        actors[i].vehparas.frontAxlePositionZ = field(vehprefix+"frontAxlePositionZ").toString().toStdString();
+        actors[i].vehparas.rearAxleMaxSteering = field(vehprefix+"rearAxleMaxSteering").toString().toStdString();
+        actors[i].vehparas.rearAxleWheelDiameter = field(vehprefix+"rearAxleWheelDiameter").toString().toStdString();
+        actors[i].vehparas.rearAxleTrackWidth = field(vehprefix+"rearAxleTrackWidth").toString().toStdString();
+        actors[i].vehparas.rearAxlePositionX = field(vehprefix+"rearAxlePositionX").toString().toStdString();
+        actors[i].vehparas.rearAxlePositionZ = field(vehprefix+"rearAxlePositionZ").toString().toStdString();
+        actors[i].vehparas.controllerName = field(vehprefix+"controllerName").toString().toStdString();
+        
+        propsnum = field(vehprefix+"ControllerProperties.propertynumber").toInt();
+        propprefix = vehprefix + "ControllerProperties.property";
+        for (int j = 0; j < propsnum; ++j) {
+            string name = field(propprefix+QString::number(j)+".name").toString().toStdString();
+            string value = field(propprefix+QString::number(j)+".value").toString().toStdString();
+            actors[i].vehparas.controllerprops.push_back(make_pair(name, value));
+        }
+        actors[i].vehparas.Throttle = make_pair(field(vehprefix+"ThrottleValue").toString().toStdString(), field(vehprefix+"ThrottleActive").toString().toStdString());
+        actors[i].vehparas.Brake = make_pair(field(vehprefix+"BrakeValue").toString().toStdString(), field(vehprefix+"BrakeActive").toString().toStdString());
+        actors[i].vehparas.Clutch = make_pair(field(vehprefix+"ClutchValue").toString().toStdString(), field(vehprefix+"ClutchActive").toString().toStdString());
+        actors[i].vehparas.ParkingBrake = make_pair(field(vehprefix+"ParkingBrakeValue").toString().toStdString(), field(vehprefix+"ParkingBrakeActive").toString().toStdString());
+        actors[i].vehparas.SteeringWheel = make_pair(field(vehprefix+"SteeringWheelValue").toString().toStdString(), field(vehprefix+"SteeringWheelActive").toString().toStdString());
+        actors[i].vehparas.Gear = make_pair(field(vehprefix+"GearNumber").toString().toStdString(), field(vehprefix+"GearActive").toString().toStdString());
+        
+        actors[i].pedparas.mass = field(prefix+"Pedestrian.mass").toString().toStdString();
+        actors[i].pedparas.model = field(prefix+"name").toString().toStdString();
+
+        actors[i].miscparas.mass = field(prefix+"MiscObject.mass").toString().toStdString();
+        xosc.setActor(i, &actors[i]);
     }
     // end - Actor
 
@@ -228,23 +313,6 @@ void LicenseWizard::accept()
     // end - StopTrigger
 
     QDialog::accept();
-}
-
-Environment getEnvironment()
-{
-
-}
-Actor getActor(int n)
-{
-
-}
-Story getStory()
-{
-
-}
-StopTrigger getStopTrigger()
-{
-
 }
 
 IntroPage::IntroPage(QWidget *parent)
@@ -278,7 +346,21 @@ FilenamePage::FilenamePage(QWidget *parent)
     filenameLineEdit = new QLineEdit;
     filenameExampleLabel = new QLabel(tr("(Example: FollowLeadingVehicle.xosc)"));
 
-    registerField("Filename.filename*", filenameLineEdit);
+    fieldprefix = "Filename.";
+    registerField(fieldprefix+"filename*", filenameLineEdit);
+
+    QVector<QString>::iterator itername;
+    QVector<QWidget*>::iterator iterwidget;
+    QVector<const char*>::iterator iterproperty;
+    for (itername = childfieldname.begin(), iterwidget = childfieldwidget.begin(), iterproperty = childfieldproperty.begin();
+      itername != childfieldname.end() && iterwidget!= childfieldwidget.end() && iterproperty != childfieldproperty.end();
+      ++itername, ++iterwidget, ++iterproperty
+    ) {
+        registerField(*itername, *iterwidget, *iterproperty);
+    }
+    childfieldname.clear();
+    childfieldwidget.clear();
+    childfieldproperty.clear();
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(filenameLabel, 0, 0);
@@ -311,8 +393,20 @@ MapPage::MapPage(QWidget *parent)
     for (size_t i = 0; i < sizeof(towns) / sizeof(const char *); ++i) {
         nameComboBox->addItem(towns[i]);
     }
-
-    registerField("Map.name", nameComboBox);
+    fieldprefix = "Map.";
+    registerField(fieldprefix + "name", nameComboBox, "currentText");
+    QVector<QString>::iterator itername;
+    QVector<QWidget*>::iterator iterwidget;
+    QVector<const char*>::iterator iterproperty;
+    for (itername = childfieldname.begin(), iterwidget = childfieldwidget.begin(), iterproperty = childfieldproperty.begin();
+      itername != childfieldname.end() && iterwidget!= childfieldwidget.end() && iterproperty != childfieldproperty.end();
+      ++itername, ++iterwidget, ++iterproperty
+    ) {
+        registerField(*itername, *iterwidget, *iterproperty);
+    }
+    childfieldname.clear();
+    childfieldwidget.clear();
+    childfieldproperty.clear();
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(nameLabel, 0, 0);
@@ -423,18 +517,30 @@ EnvironmentPage::EnvironmentPage(QWidget *parent)
     layout->addWidget(precipitationintensityLineEdit, 9, 1);
     layout->addWidget(frictionScaleFactorLineEdit, 10, 1);
 
-    registerField("Environment.name", nameLineEdit);
-    registerField("Environment.animation", animationComboBox);
-    registerField("Environment.dateTime", dateTimeLineEdit);
-    registerField("Environment.cloudState", cloudStateComboBox);
-    registerField("Environment.sunintensity", sunintensityLineEdit);
-    registerField("Environment.azimuth", azimuthLineEdit);
-    registerField("Environment.elevation", elevationLineEdit);
-    registerField("Environment.visualRange", visualRangeLineEdit);
-    registerField("Environment.precipitationType", precipitationTypeComboBox);
-    registerField("Environment.precipitationintensity", precipitationintensityLineEdit);
-    registerField("Environment.frictionScaleFactor", frictionScaleFactorLineEdit);
-
+    fieldprefix = "Environment.";
+    registerField(fieldprefix + "name", nameLineEdit);
+    registerField(fieldprefix + "animation", animationComboBox, "currentText");
+    registerField(fieldprefix + "dateTime", dateTimeLineEdit);
+    registerField(fieldprefix + "cloudState", cloudStateComboBox, "currentText");
+    registerField(fieldprefix + "sunintensity", sunintensityLineEdit);
+    registerField(fieldprefix + "azimuth", azimuthLineEdit);
+    registerField(fieldprefix + "elevation", elevationLineEdit);
+    registerField(fieldprefix + "visualRange", visualRangeLineEdit);
+    registerField(fieldprefix + "precipitationType", precipitationTypeComboBox, "currentText");
+    registerField(fieldprefix + "precipitationintensity", precipitationintensityLineEdit);
+    registerField(fieldprefix + "frictionScaleFactor", frictionScaleFactorLineEdit);
+    QVector<QString>::iterator itername;
+    QVector<QWidget*>::iterator iterwidget;
+    QVector<const char*>::iterator iterproperty;
+    for (itername = childfieldname.begin(), iterwidget = childfieldwidget.begin(), iterproperty = childfieldproperty.begin();
+      itername != childfieldname.end() && iterwidget!= childfieldwidget.end() && iterproperty != childfieldproperty.end();
+      ++itername, ++iterwidget, ++iterproperty
+    ) {
+        registerField(*itername, *iterwidget, *iterproperty);
+    }
+    childfieldname.clear();
+    childfieldwidget.clear();
+    childfieldproperty.clear();
     setLayout(layout);
 }
 
@@ -442,9 +548,19 @@ int EnvironmentPage::nextId() const
 {
     return LicenseWizard::Page_Actor;
 }
+XOSCGroupBox::XOSCGroupBox(QString str, QWidget *parent) : QGroupBox(parent)
+{
+    fieldprefix = str;
+}
 
+void XOSCGroupBox::registerField(QString str, QWidget *widget,const char * property)
+{
+    childfieldname.append(str);
+    childfieldwidget.append(widget);
+    childfieldproperty.append(property);
+}
 
-WorldPositionGroupBox::WorldPositionGroupBox(QWidget *parent) : QGroupBox(parent)
+WorldPositionGroupBox::WorldPositionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
     setTitle("WorldPosition");
     xLabel = new QLabel(tr("x:"));
@@ -455,6 +571,12 @@ WorldPositionGroupBox::WorldPositionGroupBox(QWidget *parent) : QGroupBox(parent
     zLineEdit = new QLineEdit(tr("0.0"));;
     hLabel = new QLabel(tr("h:"));;
     hLineEdit = new QLineEdit(tr("0.0"));;
+
+    registerField(fieldprefix + "x", xLineEdit);
+    registerField(fieldprefix + "y", yLineEdit);
+    registerField(fieldprefix + "z", zLineEdit);
+    registerField(fieldprefix + "h", hLineEdit);
+
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(xLabel, 0, 0);
     layout->addWidget(xLineEdit, 0, 1);
@@ -466,7 +588,7 @@ WorldPositionGroupBox::WorldPositionGroupBox(QWidget *parent) : QGroupBox(parent
     layout->addWidget(hLineEdit, 3, 1);
     setLayout(layout);
 }
-LanePositionGroupBox::LanePositionGroupBox(QWidget *parent) : QGroupBox(parent)
+LanePositionGroupBox::LanePositionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
     setTitle("LanePosition");
     roadIdLabel = new QLabel(tr("roadId:"));
@@ -477,6 +599,12 @@ LanePositionGroupBox::LanePositionGroupBox(QWidget *parent) : QGroupBox(parent)
     offsetLineEdit = new QLineEdit(tr("1.0"));;
     sLabel = new QLabel(tr("s:"));;
     sLineEdit = new QLineEdit(tr("48.58"));;
+
+    registerField(fieldprefix + "roadId", roadIdLineEdit);
+    registerField(fieldprefix + "laneId", laneIdLineEdit);
+    registerField(fieldprefix + "offset", offsetLineEdit);
+    registerField(fieldprefix + "s", sLineEdit);
+
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(roadIdLabel, 0, 0);
     layout->addWidget(roadIdLineEdit, 0, 1);
@@ -488,25 +616,27 @@ LanePositionGroupBox::LanePositionGroupBox(QWidget *parent) : QGroupBox(parent)
     layout->addWidget(sLineEdit, 3, 1);
     setLayout(layout);
 }
-PositionGroupBox::PositionGroupBox(QWidget *parent) : QGroupBox(parent)
+PositionGroupBox::PositionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
     setTitle("Position");
     typeLabel = new QLabel(tr("type:"));
     typeComboBox = new QComboBox;
     typeComboBox->addItem("WorldPosition");
     typeComboBox->addItem("LanePosition");
-    worldPositionGroupBox = new WorldPositionGroupBox;
-    lanePositionGroupBox = new LanePositionGroupBox;
+    worldPositionGroupBox = new WorldPositionGroupBox(fieldprefix + "WorldPostion.");
+    lanePositionGroupBox = new LanePositionGroupBox(fieldprefix + "LanePosition.");
+
+    registerField(fieldprefix + "type", typeComboBox, "currentText");
 
     connect(typeComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updatePositionType()));
 
     if (typeComboBox->currentText() == "WorldPosition") {
         worldPositionGroupBox->setVisible(true);
-        worldPositionGroupBox->setVisible(false);
+        lanePositionGroupBox->setVisible(false);
     }
     else {
         worldPositionGroupBox->setVisible(false);
-        worldPositionGroupBox->setVisible(true);
+        lanePositionGroupBox->setVisible(true);
     }
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(typeLabel, 0, 0);
@@ -527,10 +657,11 @@ void PositionGroupBox::updatePositionType()
     }
 }
 
-PropertiesGroupBox::PropertiesGroupBox(QWidget *parent) : QGroupBox(parent)
+PropertiesGroupBox::PropertiesGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
     propertynumberLabel = new QLabel(tr("number of properties:"));
     propertynumberComboBox = NumberQComboBox(MINPROPNUM, MAXPROPNUM);
+    registerField(fieldprefix + "propertynumber", propertynumberComboBox, "currentText");
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(propertynumberLabel, 0, 0);
     layout->addWidget(propertynumberComboBox, 0, 1);
@@ -558,6 +689,8 @@ PropertiesGroupBox::PropertiesGroupBox(QWidget *parent) : QGroupBox(parent)
             valueLabel->setVisible(false);
             valueLineEdit->setVisible(false);
         }
+        registerField(fieldprefix + "property" + QString::number(i) + ".name", nameLineEdit);
+        registerField(fieldprefix + "property" + QString::number(i) + ".value", valueLineEdit);
         layout->addWidget(nameLabel, 2*i + 1, 0);
         layout->addWidget(nameLineEdit, 2*i + 1, 1);
         layout->addWidget(valueLabel, 2*i + 2, 0);
@@ -583,10 +716,11 @@ void PropertiesGroupBox::updateProperties()
         }
     }
 }
-VehicleGroupBox::VehicleGroupBox(QWidget *parent) : QGroupBox(parent)
+VehicleGroupBox::VehicleGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
     setTitle("Vehicle Parameters");
-    controllerPropertiesGroupBox = new PropertiesGroupBox;
+    controllerPropertiesGroupBox = new PropertiesGroupBox(fieldprefix + "ControllerProperties.");
+
     controllerPropertiesGroupBox->setTitle("Controller Properties");
 
     maxSpeedLabel = new QLabel("maxSpeed:");
@@ -644,8 +778,34 @@ VehicleGroupBox::VehicleGroupBox(QWidget *parent) : QGroupBox(parent)
     GearNumberLineEdit = new QLineEdit("0");
     GearActiveComboBox = BooleanQComboBox(false);
 
-    QGridLayout *layout = new QGridLayout;
+    registerField(fieldprefix + "maxSpeed", maxSpeedLineEdit);
+    registerField(fieldprefix + "maxAcceleration", maxAccelerationLineEdit);
+    registerField(fieldprefix + "maxDeceleration", maxDecelerationLineEdit);
+    registerField(fieldprefix + "frontAxleMaxSteering", frontAxleMaxSteeringLineEdit);
+    registerField(fieldprefix + "frontAxleWheelDiameter", frontAxleWheelDiameterLineEdit);
+    registerField(fieldprefix + "frontAxleTrackWidth", frontAxleTrackWidthLineEdit);
+    registerField(fieldprefix + "frontAxlePositionX", frontAxlePositionXLineEdit);
+    registerField(fieldprefix + "frontAxlePositionZ", frontAxlePositionZLineEdit);
+    registerField(fieldprefix + "rearAxleMaxSteering", rearAxleMaxSteeringLineEdit);
+    registerField(fieldprefix + "rearAxleWheelDiameter", rearAxleWheelDiameterLineEdit);
+    registerField(fieldprefix + "rearAxleTrackWidth", rearAxleTrackWidthLineEdit);
+    registerField(fieldprefix + "rearAxlePositionX", rearAxlePositionXLineEdit);
+    registerField(fieldprefix + "rearAxlePositionZ", rearAxlePositionZLineEdit);
+    registerField(fieldprefix + "controllerName", controllerNameLineEdit);
+    registerField(fieldprefix + "ThrottleValue", ThrottleValueLineEdit);
+    registerField(fieldprefix + "ThrottleActive", ThrottleActiveComboBox, "currentText");
+    registerField(fieldprefix + "BrakeValue", BrakeValueLineEdit);
+    registerField(fieldprefix + "BrakeActive", BrakeActiveComboBox, "currentText");
+    registerField(fieldprefix + "ClutchValue", ClutchValueLineEdit);
+    registerField(fieldprefix + "ClutchActive", ClutchActiveComboBox, "currentText");
+    registerField(fieldprefix + "ParkingBrakeValue", ParkingBrakeValueLineEdit);
+    registerField(fieldprefix + "ParkingBrakeActive", ParkingBrakeActiveComboBox, "currentText");
+    registerField(fieldprefix + "SteeringWheelValue", SteeringWheelValueLineEdit);
+    registerField(fieldprefix + "SteeringWheelActive", SteeringWheelActiveComboBox, "currentText");
+    registerField(fieldprefix + "GearNumber", GearNumberLineEdit);
+    registerField(fieldprefix + "GearActive", GearActiveComboBox, "currentText");
 
+    QGridLayout *layout = new QGridLayout;
 
     layout->addWidget(maxSpeedLabel, 0, 0);
     layout->addWidget(maxAccelerationLabel, 1, 0);
@@ -705,27 +865,29 @@ VehicleGroupBox::VehicleGroupBox(QWidget *parent) : QGroupBox(parent)
     setLayout(layout);
 
 }
-PedestrianGroupBox::PedestrianGroupBox(QWidget *parent) : QGroupBox(parent)
+PedestrianGroupBox::PedestrianGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
     setTitle("Pedestrian Parameters");
     QGridLayout *layout = new QGridLayout;
     massLabel = new QLabel("mass(kg):");
     massLineEdit = new QLineEdit("90.0");
+    registerField(fieldprefix + "mass", massLineEdit);
     layout->addWidget(massLabel, 0, 0);
     layout->addWidget(massLineEdit, 0, 1);
     setLayout(layout);
 }
-MiscObjectGroupBox::MiscObjectGroupBox(QWidget *parent) : QGroupBox(parent)
+MiscObjectGroupBox::MiscObjectGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
     setTitle("MiscObject Parameters");
     QGridLayout *layout = new QGridLayout;
     massLabel = new QLabel("mass(kg):");
     massLineEdit = new QLineEdit("500.0");
+    registerField(fieldprefix + "mass", massLineEdit);
     layout->addWidget(massLabel, 0, 0);
     layout->addWidget(massLineEdit, 0, 1);
     setLayout(layout);
 }
-ActorGroupBox::ActorGroupBox(QWidget *parent) : QGroupBox(parent)
+ActorGroupBox::ActorGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
     typeLabel = new QLabel(tr("type"));
     typeComboBox = new QComboBox;
@@ -739,11 +901,11 @@ ActorGroupBox::ActorGroupBox(QWidget *parent) : QGroupBox(parent)
 
     nameLabel = new QLabel(tr("name"));
     nameComboBox = new QComboBox;
-    positionGroupBox = new PositionGroupBox;
-    propertiesGroupBox = new PropertiesGroupBox;
-    vehiclegroupbox = new VehicleGroupBox;
-    pedestriangroupbox = new PedestrianGroupBox;
-    miscObjectgroupbox = new MiscObjectGroupBox;
+    positionGroupBox = new PositionGroupBox(fieldprefix + "Position.");
+    propertiesGroupBox = new PropertiesGroupBox(fieldprefix + "Properties.");
+    vehiclegroupbox = new VehicleGroupBox(fieldprefix + "Vehicle.");
+    pedestriangroupbox = new PedestrianGroupBox(fieldprefix + "Pedestrian.");
+    miscObjectgroupbox = new MiscObjectGroupBox(fieldprefix + "MiscObject.");
     propertiesGroupBox->setTitle("Properties");
     if (typeComboBox->currentText() == "Vehicle") {
         nameComboBox->clear();
@@ -810,6 +972,17 @@ ActorGroupBox::ActorGroupBox(QWidget *parent) : QGroupBox(parent)
         boundinglLineEdit->setText("2.0");
         boundinghLineEdit->setText("1.7");
     }
+
+    registerField(fieldprefix + "type", typeComboBox, "currentText");
+    registerField(fieldprefix + "objectname", objectnameLineEdit);
+    registerField(fieldprefix + "name", nameComboBox, "currentText");
+    registerField(fieldprefix + "category", categoryComboBox, "currentText");
+    registerField(fieldprefix + "boundingx", boundingxLineEdit);
+    registerField(fieldprefix + "boundingy", boundingyLineEdit);
+    registerField(fieldprefix + "boundingz", boundingzLineEdit);
+    registerField(fieldprefix + "boundingw", boundingwLineEdit);
+    registerField(fieldprefix + "boundingl", boundinglLineEdit);
+    registerField(fieldprefix + "boundingh", boundinghLineEdit);
 
     QGridLayout *layout = new QGridLayout;
 
@@ -899,27 +1072,40 @@ ActorPage::ActorPage(QWidget *parent)
     // setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
 
     actornumLabel = new QLabel("The number of actor(s):");
-    actornumComboBox = NumberQComboBox(2, MAXACTORNUM);
-    registerField("Actor.num", actornumComboBox);
+    actornumComboBox = NumberQComboBox(MINACTORNUM, MAXACTORNUM);
+    fieldprefix = "Actor.";
+    registerField(fieldprefix+"num", actornumComboBox, "currentText");
     QGridLayout *layout = new QGridLayout;
     connect(actornumComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateActorPage()));
     layout->addWidget(actornumLabel, 0, 0);
     layout->addWidget(actornumComboBox, 0, 1);
     for (int i = 0; i < MAXACTORNUM; ++i) {
-        ActorGroupBox* box = new ActorGroupBox;
+        ActorGroupBox* box = new ActorGroupBox(fieldprefix + "Actor" + QString::number(i) + ".");
         actorGroupBox.append(box);
         box->setTitle("~Actor" + QString::number(i) + " Settings");
 
         layout->addWidget(box, i + 1, 0, 1, 2);
     }
-
-    // registerField("conclusion.agree*", agreeCheckBox);
+    QVector<QString>::iterator itername;
+    QVector<QWidget*>::iterator iterwidget;
+    QVector<const char*>::iterator iterproperty;
+    for (itername = childfieldname.begin(), iterwidget = childfieldwidget.begin(), iterproperty = childfieldproperty.begin();
+      itername != childfieldname.end() && iterwidget!= childfieldwidget.end() && iterproperty != childfieldproperty.end();
+      ++itername, ++iterwidget, ++iterproperty
+    ) {
+        registerField(*itername, *iterwidget, *iterproperty);
+    }
+    childfieldname.clear();
+    childfieldwidget.clear();
+    childfieldproperty.clear();
     layout->setAlignment(Qt::AlignTop);
     widget->setLayout(layout);
     scrollArea->setWidget(widget);
+    scrollArea->setWidgetResizable(true);
 
     QGridLayout *wholelayout = new QGridLayout;
     wholelayout->addWidget(scrollArea, 0, 0);
+    wholelayout->setAlignment(Qt::AlignTop);
     setLayout(wholelayout);
 }
 
@@ -992,16 +1178,27 @@ StopTriggerPage::StopTriggerPage(QWidget *parent)
     layout->addWidget(criteria_CollisionTestCheckBox, 5, 1);
     layout->addWidget(criteria_DrivenDistanceTestCheckBox, 6, 1);
     layout->addWidget(DrivenDistanceLineEdit, 7, 1);
-
-    registerField("StopTrigger.criteria_RunningStopTestCheckBox", criteria_RunningStopTestCheckBox);
-    registerField("StopTrigger.criteria_RunningRedLightTestCheckBox", criteria_RunningRedLightTestCheckBox);
-    registerField("StopTrigger.criteria_WrongLaneTestCheckBox", criteria_WrongLaneTestCheckBox);
-    registerField("StopTrigger.criteria_OnSidewalkTestCheckBox", criteria_OnSidewalkTestCheckBox);
-    registerField("StopTrigger.criteria_KeepLaneTestCheckBox", criteria_KeepLaneTestCheckBox);
-    registerField("StopTrigger.criteria_CollisionTestCheckBox", criteria_CollisionTestCheckBox);
-    registerField("StopTrigger.criteria_DrivenDistanceTestCheckBox", criteria_DrivenDistanceTestCheckBox);
-    registerField("StopTrigger.DrivenDistanceLineEdit", DrivenDistanceLineEdit);
-
+    fieldprefix = "StopTrigger.";
+    registerField(fieldprefix + "criteria_RunningStopTestCheckBox", criteria_RunningStopTestCheckBox);
+    registerField(fieldprefix + "criteria_RunningRedLightTestCheckBox", criteria_RunningRedLightTestCheckBox);
+    registerField(fieldprefix + "criteria_WrongLaneTestCheckBox", criteria_WrongLaneTestCheckBox);
+    registerField(fieldprefix + "criteria_OnSidewalkTestCheckBox", criteria_OnSidewalkTestCheckBox);
+    registerField(fieldprefix + "criteria_KeepLaneTestCheckBox", criteria_KeepLaneTestCheckBox);
+    registerField(fieldprefix + "criteria_CollisionTestCheckBox", criteria_CollisionTestCheckBox);
+    registerField(fieldprefix + "criteria_DrivenDistanceTestCheckBox", criteria_DrivenDistanceTestCheckBox);
+    registerField(fieldprefix + "DrivenDistanceLineEdit", DrivenDistanceLineEdit);
+    QVector<QString>::iterator itername;
+    QVector<QWidget*>::iterator iterwidget;
+    QVector<const char*>::iterator iterproperty;
+    for (itername = childfieldname.begin(), iterwidget = childfieldwidget.begin(), iterproperty = childfieldproperty.begin();
+      itername != childfieldname.end() && iterwidget!= childfieldwidget.end() && iterproperty != childfieldproperty.end();
+      ++itername, ++iterwidget, ++iterproperty
+    ) {
+        registerField(*itername, *iterwidget, *iterproperty);
+    }
+    childfieldname.clear();
+    childfieldwidget.clear();
+    childfieldproperty.clear();
     setLayout(layout);
 }
 

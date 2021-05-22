@@ -1,6 +1,6 @@
 #include "xosc_generator.h"
 
-static tinyxml2::XMLElement* newStopConditionElement(tinyxml2::XMLDocument *doc,  const char *name, const char *pararef = NULL, const char *value = NULL)
+static tinyxml2::XMLElement* newStopConditionElement(tinyxml2::XMLDocument *doc,  const char *name, const char *pararef = "", const char *value = "")
 {
     // <Condition>
     tinyxml2::XMLElement *Condition = doc->NewElement("Condition");

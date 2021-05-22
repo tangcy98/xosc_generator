@@ -11,7 +11,7 @@ struct StopTrigger {
     bool criteria_KeepLaneTest;
     bool criteria_CollisionTest;
     bool criteria_DrivenDistanceTest;
-    const char *DrivenDistance;
+    std::string DrivenDistance;
     StopTrigger(
       bool icriteria_RunningStopTest = true,
       bool icriteria_RunningRedLightTest = true,
@@ -20,7 +20,7 @@ struct StopTrigger {
       bool icriteria_KeepLaneTest = true,
       bool icriteria_CollisionTest = true,
       bool icriteria_DrivenDistanceTest = true,
-      const char *iDrivenDistance = "100"
+      std::string iDrivenDistance = "100"
     ) {
         criteria_RunningStopTest = icriteria_RunningStopTest;
         criteria_RunningRedLightTest = icriteria_RunningRedLightTest;
