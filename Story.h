@@ -57,21 +57,21 @@ struct TrafficAction {};
   * Applies longitudinal control behavior on the reference entity/entities. Either a SpeedAction or a LongitudinalDistanceAction.
   */
 struct LongitudinalAction {
-    const char *dynamicsShape;
-    const char *dynamicsvalue;
-    const char *dynamicsDimension;
-    const char *targetvalue;
+    string dynamicsShape;
+    string dynamicsvalue;
+    string dynamicsDimension;
+    string targetvalue;
 };
 
 /**
   * Applies lateral control behavior on the reference entity/entities. Either a LaneChangeAction, LaneOffsetAction or a LateralDistanceAction.
   */
 struct LateralAction {
-    const char *dynamicsShape;
-    const char *dynamicsvalue;
-    const char *dynamicsDimension;
-    const char *targetentityRef;
-    const char *targetvalue;
+    string dynamicsShape;
+    string dynamicsvalue;
+    string dynamicsDimension;
+    string targetentityRef;
+    string targetvalue;
 };
 
 /**
@@ -83,11 +83,11 @@ struct VisibilityAction{};
   * Synchronizes the reference entity/entities with a master entity. A target position is provided for the entity and for the master entity to be reached at the same time.
   */
 struct SynchronizeAction {
-    const char *masterEntityRef;
+    string masterEntityRef;
     Position targetPositionMaster;
     Position targetPosition;
-    const char *relativeSpeedToMasterValue;
-    const char *speedTargetValueType;
+    string relativeSpeedToMasterValue;
+    string speedTargetValueType;
 };
 /**
   * Unsupported
@@ -114,7 +114,7 @@ struct RoutingAction {
 
 
 struct Action {
-    const char *name;
+    string name;
     ActionType actionType;
     EnvironmentAction environmentAction;
     LongitudinalAction longitudinalAction;
@@ -154,9 +154,9 @@ enum ConditionType {
   * A current parameter value is compared to a reference value.
   */
 struct ParameterCondition {
-    const char *parameterRef;
-    const char *value;
-    const char *rule;
+    string parameterRef;
+    string value;
+    string rule;
 };
 /**
   * Unsupported
@@ -169,16 +169,16 @@ struct TimeOfDayCondition {
   * The current simulation time is compared to a reference value.
   */
 struct SimulationTimeCondition {
-    const char *value;
-    const char *rule;
+    string value;
+    string rule;
 };
 /**
   * Condition becomes true if the referenced StoryboardElement terminates according to the given rule.
   */
 struct StoryboardElementStateCondition {
-    const char *storyboardElementType;
-    const char *storyboardElementRef;
-    const char *state;
+    string storyboardElementType;
+    string storyboardElementRef;
+    string state;
 
 };
 /**
@@ -248,7 +248,7 @@ struct AccelerationCondition {
   * Condition checking for how long the reference entity has not moved.
   */
 struct StandStillCondition {
-    const char *duration;
+    string duration;
 };
 /**
   * Unsupported
@@ -268,13 +268,13 @@ struct RelativeSpeedCondition {
   * Condition checking the total traveled distance of the reference entity since the start of the scenario.
   */
 struct TraveledDistanceCondition {
-    const char *value;
+    string value;
 };
 /**
   * Condition checking whether the reference entity has reached a given position within a given uncertainty.
   */
 struct ReachPositionCondition {
-    const char *tolerance;
+    string tolerance;
     Position position;
 };
 /**
@@ -288,19 +288,19 @@ struct DistanceCondition {
   * Condition checking the relative distance between two entities.
   */
 struct RelativeDistanceCondition {
-    const char *entityRef;
-    const char *relativeDistanceType;
-    const char *value;
-    const char *freespace;
-    const char *rule;
+    string entityRef;
+    string relativeDistanceType;
+    string value;
+    string freespace;
+    string rule;
 };
 
 
 struct Condition {
-    const char *name;
-    const char *delay;
-    const char *conditionEdge;
-    const char *triggeringEntityRef;
+    string name;
+    string delay;
+    string conditionEdge;
+    string triggeringEntityRef;
     ConditionType type;
     ParameterCondition parameterCondition;
     SimulationTimeCondition simulationTimeCondition;
@@ -312,8 +312,8 @@ struct Condition {
 };
 
 struct Event {
-    const char *name;
-    const char *priority;
+    string name;
+    string priority;
     Action action;
     vector<Condition> condition;
 };
@@ -322,25 +322,25 @@ struct Event {
 struct Story
 {
     /* data */
-    const char *storyName;
-    const char *actName;
-    const char *maneuverGroupName;
-    const char *maximumExecutionCount;
-    const char *selectTriggeringEntities;
-    const char *entityRef;
-    const char *maneuverName;
+    string storyName;
+    string actName;
+    string maneuverGroupName;
+    string maximumExecutionCount;
+    string selectTriggeringEntities;
+    string entityRef;
+    string maneuverName;
     vector<Event> eventlist; 
     vector<Condition> startCondition;
     vector<Condition> stopCondition;
 
     Story(
-      const char *istoryName = NULL,
-      const char *iactName = NULL,
-      const char *imaneuverGroupName = NULL,
-      const char *imaximumExecutionCount = NULL,
-      const char *iselectTriggeringEntities = NULL,
-      const char *ientityRef = NULL,
-      const char *imaneuverName = NULL) {
+      string istoryName= "",
+      string iactName= "",
+      string imaneuverGroupName= "",
+      string imaximumExecutionCount= "",
+      string iselectTriggeringEntities= "",
+      string ientityRef= "",
+      string imaneuverName= "") {
         storyName = istoryName;
         actName = iactName;
         maneuverGroupName = imaneuverGroupName;
@@ -350,9 +350,4 @@ struct Story
         maneuverName = imaneuverName;
     };
 };
-
-
-
-
-
 #endif

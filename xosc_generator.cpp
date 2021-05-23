@@ -30,9 +30,9 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 {
     // <Condition>
     tinyxml2::XMLElement *Condition = doc->NewElement("Condition");
-    Condition->SetAttribute("name", c->name);
-    Condition->SetAttribute("delay", c->delay);
-    Condition->SetAttribute("conditionEdge", c->conditionEdge);
+    Condition->SetAttribute("name", c->name.c_str());
+    Condition->SetAttribute("delay", c->delay.c_str());
+    Condition->SetAttribute("conditionEdge", c->conditionEdge.c_str());
 
     switch (c->type) {
         /** ByValueCondition **/
@@ -42,9 +42,9 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
             
             // <ParameterCondition>
             tinyxml2::XMLElement *ParameterCondition = doc->NewElement("ParameterCondition");
-            ParameterCondition->SetAttribute("parameterRef", c->parameterCondition.parameterRef);
-            ParameterCondition->SetAttribute("value", c->parameterCondition.value);
-            ParameterCondition->SetAttribute("rule", c->parameterCondition.rule);
+            ParameterCondition->SetAttribute("parameterRef", c->parameterCondition.parameterRef.c_str());
+            ParameterCondition->SetAttribute("value", c->parameterCondition.value.c_str());
+            ParameterCondition->SetAttribute("rule", c->parameterCondition.rule.c_str());
             ByValueCondition->LinkEndChild(ParameterCondition);
             // </ParameterCondition>
 
@@ -58,8 +58,8 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
             
             // <SimulationTimeCondition>
             tinyxml2::XMLElement *SimulationTimeCondition = doc->NewElement("SimulationTimeCondition");
-            SimulationTimeCondition->SetAttribute("value", c->simulationTimeCondition.value);
-            SimulationTimeCondition->SetAttribute("rule", c->simulationTimeCondition.rule);
+            SimulationTimeCondition->SetAttribute("value", c->simulationTimeCondition.value.c_str());
+            SimulationTimeCondition->SetAttribute("rule", c->simulationTimeCondition.rule.c_str());
             ByValueCondition->LinkEndChild(SimulationTimeCondition);
             // </SimulationTimeCondition>
 
@@ -73,9 +73,9 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
             
             // <StoryboardElementStateCondition>
             tinyxml2::XMLElement *StoryboardElementStateCondition = doc->NewElement("StoryboardElementStateCondition");
-            StoryboardElementStateCondition->SetAttribute("storyboardElementType", c->storyboardElementStateCondition.storyboardElementType);
-            StoryboardElementStateCondition->SetAttribute("storyboardElementRef", c->storyboardElementStateCondition.storyboardElementRef);
-            StoryboardElementStateCondition->SetAttribute("state", c->storyboardElementStateCondition.state);
+            StoryboardElementStateCondition->SetAttribute("storyboardElementType", c->storyboardElementStateCondition.storyboardElementType.c_str());
+            StoryboardElementStateCondition->SetAttribute("storyboardElementRef", c->storyboardElementStateCondition.storyboardElementRef.c_str());
+            StoryboardElementStateCondition->SetAttribute("state", c->storyboardElementStateCondition.state.c_str());
             ByValueCondition->LinkEndChild(StoryboardElementStateCondition);
             // </StoryboardElementStateCondition>
 
@@ -95,7 +95,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <EntityRef>
             tinyxml2::XMLElement *EntityRef = doc->NewElement("EntityRef");
-            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef);
+            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef.c_str());
             TriggeringEntities->LinkEndChild(EntityRef);
             // </EntityRef>
 
@@ -107,7 +107,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <StandStillCondition>
             tinyxml2::XMLElement *StandStillCondition = doc->NewElement("StandStillCondition");
-            StandStillCondition->SetAttribute("duration", c->standStillCondition.duration);
+            StandStillCondition->SetAttribute("duration", c->standStillCondition.duration.c_str());
             EntityCondition->LinkEndChild(StandStillCondition);
             // </StandStillCondition>
 
@@ -128,7 +128,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <EntityRef>
             tinyxml2::XMLElement *EntityRef = doc->NewElement("EntityRef");
-            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef);
+            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef.c_str());
             TriggeringEntities->LinkEndChild(EntityRef);
             // </EntityRef>
 
@@ -140,7 +140,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <TraveledDistanceCondition>
             tinyxml2::XMLElement *TraveledDistanceCondition = doc->NewElement("TraveledDistanceCondition");
-            TraveledDistanceCondition->SetAttribute("value", c->traveledDistanceCondition.value);
+            TraveledDistanceCondition->SetAttribute("value", c->traveledDistanceCondition.value.c_str());
             EntityCondition->LinkEndChild(TraveledDistanceCondition);
             // </TraveledDistanceCondition>
 
@@ -161,7 +161,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <EntityRef>
             tinyxml2::XMLElement *EntityRef = doc->NewElement("EntityRef");
-            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef);
+            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef.c_str());
             TriggeringEntities->LinkEndChild(EntityRef);
             // </EntityRef>
 
@@ -173,7 +173,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <ReachPositionCondition>
             tinyxml2::XMLElement *ReachPositionCondition = doc->NewElement("ReachPositionCondition");
-            ReachPositionCondition->SetAttribute("value", c->reachPositionCondition.tolerance);
+            ReachPositionCondition->SetAttribute("value", c->reachPositionCondition.tolerance.c_str());
             EntityCondition->LinkEndChild(ReachPositionCondition);
             // </ReachPositionCondition>
 
@@ -194,7 +194,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <EntityRef>
             tinyxml2::XMLElement *EntityRef = doc->NewElement("EntityRef");
-            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef);
+            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef.c_str());
             TriggeringEntities->LinkEndChild(EntityRef);
             // </EntityRef>
 
@@ -206,11 +206,11 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <RelativeDistanceCondition>
             tinyxml2::XMLElement *RelativeDistanceCondition = doc->NewElement("RelativeDistanceCondition");
-            RelativeDistanceCondition->SetAttribute("entityRef", c->relativeDistanceCondition.entityRef);
-            RelativeDistanceCondition->SetAttribute("relativeDistanceType", c->relativeDistanceCondition.relativeDistanceType);
-            RelativeDistanceCondition->SetAttribute("value", c->relativeDistanceCondition.value);
-            RelativeDistanceCondition->SetAttribute("freespace", c->relativeDistanceCondition.freespace);
-            RelativeDistanceCondition->SetAttribute("rule", c->relativeDistanceCondition.rule);
+            RelativeDistanceCondition->SetAttribute("entityRef", c->relativeDistanceCondition.entityRef.c_str());
+            RelativeDistanceCondition->SetAttribute("relativeDistanceType", c->relativeDistanceCondition.relativeDistanceType.c_str());
+            RelativeDistanceCondition->SetAttribute("value", c->relativeDistanceCondition.value.c_str());
+            RelativeDistanceCondition->SetAttribute("freespace", c->relativeDistanceCondition.freespace.c_str());
+            RelativeDistanceCondition->SetAttribute("rule", c->relativeDistanceCondition.rule.c_str());
             EntityCondition->LinkEndChild(RelativeDistanceCondition);
             // </RelativeDistanceCondition>
 
@@ -787,24 +787,24 @@ SETRES XOSC::setStory(const Story *s)
 
     // <Story>
     tinyxml2::XMLElement *Story = doc->NewElement("Story");
-    Story->SetAttribute("name", s->storyName);
+    Story->SetAttribute("name", s->storyName.c_str());
 
     // <Act>
     tinyxml2::XMLElement *Act = doc->NewElement("Act");
-    Act->SetAttribute("name", s->actName);
+    Act->SetAttribute("name", s->actName.c_str());
 
     // <ManeuverGroup>
     tinyxml2::XMLElement *ManeuverGroup = doc->NewElement("ManeuverGroup");
-    ManeuverGroup->SetAttribute("maximumExecutionCount", s->maximumExecutionCount);
-    ManeuverGroup->SetAttribute("name", s->maneuverGroupName);
+    ManeuverGroup->SetAttribute("maximumExecutionCount", s->maximumExecutionCount.c_str());
+    ManeuverGroup->SetAttribute("name", s->maneuverGroupName.c_str());
 
     // <Actors>
     tinyxml2::XMLElement *Actors = doc->NewElement("Actors");
-    Actors->SetAttribute("selectTriggeringEntities", s->selectTriggeringEntities);
+    Actors->SetAttribute("selectTriggeringEntities", s->selectTriggeringEntities.c_str());
 
     // <EntityRef>
     tinyxml2::XMLElement *EntityRef = doc->NewElement("EntityRef");
-    EntityRef->SetAttribute("entityRef", s->entityRef);
+    EntityRef->SetAttribute("entityRef", s->entityRef.c_str());
     Actors->LinkEndChild(EntityRef);
     // </EntityRef>
 
@@ -813,17 +813,17 @@ SETRES XOSC::setStory(const Story *s)
 
     // <Maneuver>
     tinyxml2::XMLElement *Maneuver = doc->NewElement("Maneuver");
-    Maneuver->SetAttribute("name", s->maneuverName);
+    Maneuver->SetAttribute("name", s->maneuverName.c_str());
 
     for (auto iter = s->eventlist.begin(); iter != s->eventlist.end(); iter++) {
         // <Event>
         tinyxml2::XMLElement *Event = doc->NewElement("Event");
-        Event->SetAttribute("name", iter->name);
-        Event->SetAttribute("priority", iter->priority);
+        Event->SetAttribute("name", iter->name.c_str());
+        Event->SetAttribute("priority", iter->priority.c_str());
 
         // <Action>
         tinyxml2::XMLElement *Action = doc->NewElement("Action");
-        Action->SetAttribute("name", iter->action.name);
+        Action->SetAttribute("name", iter->action.name.c_str());
 
         switch (iter->action.actionType) {
             case ENVIRONMENTACTION: {
@@ -899,9 +899,9 @@ SETRES XOSC::setStory(const Story *s)
 
                 // <SpeedActionDynamics>
                 tinyxml2::XMLElement *SpeedActionDynamics = doc->NewElement("SpeedActionDynamics");
-                SpeedActionDynamics->SetAttribute("dynamicsShape", iter->action.longitudinalAction.dynamicsShape);
-                SpeedActionDynamics->SetAttribute("value", iter->action.longitudinalAction.dynamicsvalue);
-                SpeedActionDynamics->SetAttribute("dynamicsDimension", iter->action.longitudinalAction.dynamicsDimension);
+                SpeedActionDynamics->SetAttribute("dynamicsShape", iter->action.longitudinalAction.dynamicsShape.c_str());
+                SpeedActionDynamics->SetAttribute("value", iter->action.longitudinalAction.dynamicsvalue.c_str());
+                SpeedActionDynamics->SetAttribute("dynamicsDimension", iter->action.longitudinalAction.dynamicsDimension.c_str());
                 SpeedAction->LinkEndChild(SpeedActionDynamics);
                 // </SpeedActionDynamics>
 
@@ -910,7 +910,7 @@ SETRES XOSC::setStory(const Story *s)
                 
                 // <AbsoluteTargetSpeed>
                 tinyxml2::XMLElement *AbsoluteTargetSpeed = doc->NewElement("AbsoluteTargetSpeed");
-                AbsoluteTargetSpeed->SetAttribute("value", iter->action.longitudinalAction.targetvalue);
+                AbsoluteTargetSpeed->SetAttribute("value", iter->action.longitudinalAction.targetvalue.c_str());
                 SpeedActionTarget->LinkEndChild(AbsoluteTargetSpeed);
                 // </AbsoluteTargetSpeed>
 
@@ -939,9 +939,9 @@ SETRES XOSC::setStory(const Story *s)
 
                 // <LaneChangeActionDynamics>
                 tinyxml2::XMLElement *LaneChangeActionDynamics = doc->NewElement("LaneChangeActionDynamics");
-                LaneChangeActionDynamics->SetAttribute("dynamicsShape", iter->action.lateralAction.dynamicsShape);
-                LaneChangeActionDynamics->SetAttribute("value", iter->action.lateralAction.dynamicsvalue);
-                LaneChangeActionDynamics->SetAttribute("dynamicsDimension", iter->action.lateralAction.dynamicsDimension);
+                LaneChangeActionDynamics->SetAttribute("dynamicsShape", iter->action.lateralAction.dynamicsShape.c_str());
+                LaneChangeActionDynamics->SetAttribute("value", iter->action.lateralAction.dynamicsvalue.c_str());
+                LaneChangeActionDynamics->SetAttribute("dynamicsDimension", iter->action.lateralAction.dynamicsDimension.c_str());
                 LaneChangeAction->LinkEndChild(LaneChangeActionDynamics);
                 // </LaneChangeActionDynamics>
 
@@ -950,8 +950,8 @@ SETRES XOSC::setStory(const Story *s)
 
                 // <RelativeTargetLane>
                 tinyxml2::XMLElement *RelativeTargetLane = doc->NewElement("RelativeTargetLane");
-                RelativeTargetLane->SetAttribute("entityRef", iter->action.lateralAction.targetentityRef);
-                RelativeTargetLane->SetAttribute("value", iter->action.lateralAction.targetvalue);
+                RelativeTargetLane->SetAttribute("entityRef", iter->action.lateralAction.targetentityRef.c_str());
+                RelativeTargetLane->SetAttribute("value", iter->action.lateralAction.targetvalue.c_str());
                 LaneChangeTarget->LinkEndChild(RelativeTargetLane);
                 // </RelativeTargetLane>
 
@@ -974,7 +974,7 @@ SETRES XOSC::setStory(const Story *s)
                 
                 // <SynchronizeAction>
                 tinyxml2::XMLElement *SynchronizeAction = doc->NewElement("SynchronizeAction");
-                SynchronizeAction->SetAttribute("masterEntityRef", iter->action.synchronizeAction.masterEntityRef);
+                SynchronizeAction->SetAttribute("masterEntityRef", iter->action.synchronizeAction.masterEntityRef.c_str());
 
                 // <TargetPositionMaster>
                 tinyxml2::XMLElement *TargetPositionMaster = doc->NewElement("TargetPositionMaster");
@@ -1029,8 +1029,8 @@ SETRES XOSC::setStory(const Story *s)
 
                 // <RelativeSpeedToMaster>
                 tinyxml2::XMLElement *RelativeSpeedToMaster = doc->NewElement("RelativeSpeedToMaster");
-                RelativeSpeedToMaster->SetAttribute("value", iter->action.synchronizeAction.relativeSpeedToMasterValue);
-                RelativeSpeedToMaster->SetAttribute("speedTargetValueType", iter->action.synchronizeAction.speedTargetValueType);
+                RelativeSpeedToMaster->SetAttribute("value", iter->action.synchronizeAction.relativeSpeedToMasterValue.c_str());
+                RelativeSpeedToMaster->SetAttribute("speedTargetValueType", iter->action.synchronizeAction.speedTargetValueType.c_str());
                 FinalSpeed->LinkEndChild(RelativeSpeedToMaster);
                 // </RelativeSpeedToMaster>
 
