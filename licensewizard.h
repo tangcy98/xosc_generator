@@ -430,11 +430,11 @@ private:
     QLabel *freespaceLabel;
     QLabel *ruleLabel;
 
-    QLineEdit *entityRefLineEdit;
-    QLineEdit *relativeDistanceTypeLineEdit;
+    QComboBox *entityRefComboBox;
+    QComboBox *relativeDistanceTypeComboBox;
     QLineEdit *valueLineEdit;
-    QLineEdit *freespaceLineEdit;
-    QLineEdit *ruleLineEdit;
+    QComboBox *freespaceComboBox;
+    QComboBox *ruleComboBox;
 };
 
 class ConditionGroupBox : public XOSCGroupBox

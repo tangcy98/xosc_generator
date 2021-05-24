@@ -318,7 +318,6 @@ SETRES XOSC::setFilename(const char *file)
     if (!elem) return SET_ERROR;
     elem->SetAttribute("description", description);
 
-    // TODO: Set Maneuver name
     return SET_OK;
 }
 

@@ -329,12 +329,342 @@ void LicenseWizard::accept()
     story.entityRef = field("Actor."+field("Story.entityRef").toString()+".name").toString().toStdString();
     story.maneuverName = field("Story.maneuverName").toString().toStdString();
     
-    Event event;
+    int eventnum = field("Event.eventNum").toInt();
+    for (int i = 0; i < eventnum; ++i) {
+        Event event;
+        event.condition.clear();
+        QString prefix = "Event.Event"+QString::number(i)+".";
+        event.name = field(prefix+"name").toString().toStdString();
+        event.priority = field(prefix+"priority").toString().toStdString();
+        event.action.name = field(prefix+"Action.name").toString().toStdString();
+        QString type = field(prefix+"Action.type").toString();
+        if (type == "EnvironmentAction") {
+            event.action.actionType = ENVIRONMENTACTION;
+        }
+        else if (type == "LongitudinalAction") {
+            event.action.actionType = LONGITUDINALACTION;
+        }
+        else if (type == "LateralAction") {
+            event.action.actionType = LATERALACTION;
+        }
+        else if (type == "SynchronizeAction") {
+            event.action.actionType = SYNCHRONIZEACTION;
+        }
+        else if (type == "RoutingAction") {
+            event.action.actionType = ROUTINGACTION;
+        }
 
-    
+        // EnvironmentAction
+        event.action.environmentAction.environment.name = field(prefix+"Action.EnvironmentAction.Environment.name").toString().toStdString();
+        event.action.environmentAction.environment.animation = field(prefix+"Action.EnvironmentAction.Environment.animation").toString().toStdString();
+        event.action.environmentAction.environment.dateTime = field(prefix+"Action.EnvironmentAction.Environment.dateTime").toString().toStdString();
+        event.action.environmentAction.environment.cloudState = field(prefix+"Action.EnvironmentAction.Environment.cloudState").toString().toStdString();
+        event.action.environmentAction.environment.sunintensity = field(prefix+"Action.EnvironmentAction.Environment.sunintensity").toString().toStdString();
+        event.action.environmentAction.environment.azimuth = field(prefix+"Action.EnvironmentAction.Environment.azimuth").toString().toStdString();
+        event.action.environmentAction.environment.elevation = field(prefix+"Action.EnvironmentAction.Environment.elevation").toString().toStdString();
+        event.action.environmentAction.environment.visualRange = field(prefix+"Action.EnvironmentAction.Environment.visualRange").toString().toStdString();
+        event.action.environmentAction.environment.precipitationType = field(prefix+"Action.EnvironmentAction.Environment.precipitationType").toString().toStdString();
+        event.action.environmentAction.environment.precipitationintensity = field(prefix+"Action.EnvironmentAction.Environment.precipitationintensity").toString().toStdString();
+        event.action.environmentAction.environment.frictionScaleFactor = field(prefix+"Action.EnvironmentAction.Environment.frictionScaleFactor").toString().toStdString();
 
-    Condition condition;
+        // LongitudinalAction
+        event.action.longitudinalAction.dynamicsShape = field(prefix+"Action.LongitudinalAction.dynamicsShape").toString().toStdString();
+        event.action.longitudinalAction.dynamicsvalue = field(prefix+"Action.LongitudinalAction.dynamicsvalue").toString().toStdString();
+        event.action.longitudinalAction.dynamicsDimension = field(prefix+"Action.LongitudinalAction.dynamicsDimension").toString().toStdString();
+        event.action.longitudinalAction.targetvalue = field(prefix+"Action.LongitudinalAction.targetvalue").toString().toStdString();
 
+        // LateralAction
+        event.action.lateralAction.dynamicsShape = field(prefix+"Action.LateralAction.dynamicsShape").toString().toStdString();
+        event.action.lateralAction.dynamicsvalue = field(prefix+"Action.LateralAction.dynamicsvalue").toString().toStdString();
+        event.action.lateralAction.dynamicsDimension = field(prefix+"Action.LateralAction.dynamicsDimension").toString().toStdString();
+        event.action.lateralAction.targetentityRef = field("Actor."+field(prefix+"Action.LateralAction.targetentityRef").toString()+".name").toString().toStdString();
+        event.action.lateralAction.targetvalue = field(prefix+"Action.LateralAction.targetvalue").toString().toStdString();
+
+        // SynchronizeAction
+        event.action.synchronizeAction.masterEntityRef = field("Actor."+field(prefix+"Action.SynchronizeAction.masterEntityRef").toString()+".name").toString().toStdString();
+        event.action.synchronizeAction.relativeSpeedToMasterValue = field(prefix+"Action.SynchronizeAction.relativeSpeedToMasterValue").toString().toStdString();
+        event.action.synchronizeAction.speedTargetValueType = field(prefix+"Action.SynchronizeAction.speedTargetValueType").toString().toStdString();
+        type = field(prefix+"Action.SynchronizeAction.targetPositionMaster.type").toString();
+        if (type == "WorldPosition") {
+            event.action.synchronizeAction.targetPositionMaster.positiontype = WORLD;
+        }
+        else {
+            event.action.synchronizeAction.targetPositionMaster.positiontype = LANE;
+        }
+        event.action.synchronizeAction.targetPositionMaster.worldPosition.x = field(prefix+"Action.SynchronizeAction.targetPositionMaster.WorldPostion.x").toString().toStdString();
+        event.action.synchronizeAction.targetPositionMaster.worldPosition.y = field(prefix+"Action.SynchronizeAction.targetPositionMaster.WorldPostion.y").toString().toStdString();
+        event.action.synchronizeAction.targetPositionMaster.worldPosition.z = field(prefix+"Action.SynchronizeAction.targetPositionMaster.WorldPostion.z").toString().toStdString();
+        event.action.synchronizeAction.targetPositionMaster.worldPosition.h = field(prefix+"Action.SynchronizeAction.targetPositionMaster.WorldPostion.h").toString().toStdString();
+        event.action.synchronizeAction.targetPositionMaster.lanePosition.laneId = field(prefix+"Action.SynchronizeAction.targetPositionMaster.LanePosition.laneId").toString().toStdString();
+        event.action.synchronizeAction.targetPositionMaster.lanePosition.roadId = field(prefix+"Action.SynchronizeAction.targetPositionMaster.LanePosition.roadId").toString().toStdString();
+        event.action.synchronizeAction.targetPositionMaster.lanePosition.offset = field(prefix+"Action.SynchronizeAction.targetPositionMaster.LanePosition.offset").toString().toStdString();
+        event.action.synchronizeAction.targetPositionMaster.lanePosition.s = field(prefix+"Action.SynchronizeAction.targetPositionMaster.LanePosition.s").toString().toStdString();
+        type = field(prefix+"Action.SynchronizeAction.targetPosition.type").toString();
+        if (type == "WorldPosition") {
+            event.action.synchronizeAction.targetPosition.positiontype = WORLD;
+        }
+        else {
+            event.action.synchronizeAction.targetPosition.positiontype = LANE;
+        }
+        event.action.synchronizeAction.targetPosition.worldPosition.x = field(prefix+"Action.SynchronizeAction.targetPosition.WorldPostion.x").toString().toStdString();
+        event.action.synchronizeAction.targetPosition.worldPosition.y = field(prefix+"Action.SynchronizeAction.targetPosition.WorldPostion.y").toString().toStdString();
+        event.action.synchronizeAction.targetPosition.worldPosition.z = field(prefix+"Action.SynchronizeAction.targetPosition.WorldPostion.z").toString().toStdString();
+        event.action.synchronizeAction.targetPosition.worldPosition.h = field(prefix+"Action.SynchronizeAction.targetPosition.WorldPostion.h").toString().toStdString();
+        event.action.synchronizeAction.targetPosition.lanePosition.laneId = field(prefix+"Action.SynchronizeAction.targetPosition.LanePosition.laneId").toString().toStdString();
+        event.action.synchronizeAction.targetPosition.lanePosition.roadId = field(prefix+"Action.SynchronizeAction.targetPosition.LanePosition.roadId").toString().toStdString();
+        event.action.synchronizeAction.targetPosition.lanePosition.offset = field(prefix+"Action.SynchronizeAction.targetPosition.LanePosition.offset").toString().toStdString();
+        event.action.synchronizeAction.targetPosition.lanePosition.s = field(prefix+"Action.SynchronizeAction.targetPosition.LanePosition.s").toString().toStdString();
+
+        // RoutingAction
+        type = field(prefix+"Action.RoutingAction.Position.type").toString();
+        if (type == "WorldPosition") {
+            event.action.routingAction.position.positiontype = WORLD;
+        }
+        else {
+            event.action.routingAction.position.positiontype = LANE;
+        }
+        event.action.routingAction.position.worldPosition.x = field(prefix+"Action.RoutingAction.Position.WorldPostion.x").toString().toStdString();
+        event.action.routingAction.position.worldPosition.y = field(prefix+"Action.RoutingAction.Position.WorldPostion.y").toString().toStdString();
+        event.action.routingAction.position.worldPosition.z = field(prefix+"Action.RoutingAction.Position.WorldPostion.z").toString().toStdString();
+        event.action.routingAction.position.worldPosition.h = field(prefix+"Action.RoutingAction.Position.WorldPostion.h").toString().toStdString();
+        event.action.routingAction.position.lanePosition.laneId = field(prefix+"Action.RoutingAction.Position.LanePosition.laneId").toString().toStdString();
+        event.action.routingAction.position.lanePosition.roadId = field(prefix+"Action.RoutingAction.Position.LanePosition.roadId").toString().toStdString();
+        event.action.routingAction.position.lanePosition.offset = field(prefix+"Action.RoutingAction.Position.LanePosition.offset").toString().toStdString();
+        event.action.routingAction.position.lanePosition.s = field(prefix+"Action.RoutingAction.Position.LanePosition.s").toString().toStdString();
+
+        int conditionnum = field(prefix+"conditionNum").toInt();
+        for (int j = 0; j < conditionnum; ++j) {
+            Condition condition;
+            QString conditionprefix = prefix+"StartCondition"+QString::number(j)+".";
+            condition.name = field(conditionprefix+"name").toString().toStdString();
+            condition.delay = field(conditionprefix+"delay").toString().toStdString();
+            condition.conditionEdge = field(conditionprefix+"conditionEdge").toString().toStdString();
+            condition.triggeringEntityRef = field("Actor."+field(conditionprefix+"triggeringEntityRef").toString()+".name").toString().toStdString();
+            QString type = field(conditionprefix+"type").toString();
+            if (type == "ParameterCondition") {
+                condition.type = PARAMETERCONDITION;
+            }
+            else if (type == "SimulationTimeCondition") {
+                condition.type = SIMULATIONTIMECONDITION;
+            }
+            else if (type == "StoryboardElementStateCondition") {
+                condition.type = STORYBOARDELEMENTSTATECONDITION;
+            }
+            else if (type == "StandStillCondition") {
+                condition.type = STANDSTILLCONDITION;
+            }
+            else if (type == "TraveledDistanceCondition") {
+                condition.type = TRAVELEDDISTANCECONDITION;
+            }
+            else if (type == "ReachPositionCondition") {
+                condition.type = REACHPOSITIONCONDITION;
+            }
+            else if (type == "RelativeDistanceCondition") {
+                condition.type = RELATIVEDISTANCECONDITION;
+            }
+            // ParameterCondition
+            condition.parameterCondition.parameterRef = field(conditionprefix+"ParameterCondition.parameterRef").toString().toStdString();
+            condition.parameterCondition.value = field(conditionprefix+"ParameterCondition.value").toString().toStdString();
+            condition.parameterCondition.rule = field(conditionprefix+"ParameterCondition.rule").toString().toStdString();
+
+            // SimulationTimeCondition
+            condition.simulationTimeCondition.value = field(conditionprefix+"SimulationTimeCondition.value").toString().toStdString();
+            condition.simulationTimeCondition.rule = field(conditionprefix+"SimulationTimeCondition.rule").toString().toStdString();
+
+            // StoryboardElementStateCondition
+            condition.storyboardElementStateCondition.storyboardElementType = field(conditionprefix+"StoryboardElementStateCondition.storyboardElementType").toString().toStdString();
+            condition.storyboardElementStateCondition.storyboardElementRef = field("Event."+field(conditionprefix+"StoryboardElementStateCondition.storyboardElementRef").toString()+".Action.name").toString().toStdString();
+            condition.storyboardElementStateCondition.state = field(conditionprefix+"StoryboardElementStateCondition.state").toString().toStdString();
+
+            // StandStillCondition
+            condition.standStillCondition.duration = field(conditionprefix+"StandStillCondition.duration").toString().toStdString();
+
+            // TraveledDistanceCondition
+            condition.traveledDistanceCondition.value = field(conditionprefix+"TraveledDistanceCondition.value").toString().toStdString();
+
+            // ReachPositionCondition
+            condition.reachPositionCondition.tolerance = field(conditionprefix+"ReachPositionCondition.tolerance").toString().toStdString();
+            type = field(conditionprefix+"ReachPositionCondition.Position.type").toString();
+            if (type == "WorldPosition") {
+                condition.reachPositionCondition.position.positiontype = WORLD;
+            }
+            else {
+                condition.reachPositionCondition.position.positiontype = LANE;
+            }
+            condition.reachPositionCondition.position.worldPosition.x = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.x").toString().toStdString();
+            condition.reachPositionCondition.position.worldPosition.y = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.y").toString().toStdString();
+            condition.reachPositionCondition.position.worldPosition.z = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.z").toString().toStdString();
+            condition.reachPositionCondition.position.worldPosition.h = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.h").toString().toStdString();
+            condition.reachPositionCondition.position.lanePosition.laneId = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.laneId").toString().toStdString();
+            condition.reachPositionCondition.position.lanePosition.roadId = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.roadId").toString().toStdString();
+            condition.reachPositionCondition.position.lanePosition.offset = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.offset").toString().toStdString();
+            condition.reachPositionCondition.position.lanePosition.s = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.s").toString().toStdString();
+
+            // RelativeDistanceCondition
+            condition.relativeDistanceCondition.entityRef = field("Actor."+field(conditionprefix+"RelativeDistanceCondition.entityRef").toString()+".name").toString().toStdString();
+            condition.relativeDistanceCondition.relativeDistanceType = field(conditionprefix+"RelativeDistanceCondition.relativeDistanceType").toString().toStdString();
+            condition.relativeDistanceCondition.value = field(conditionprefix+"RelativeDistanceCondition.value").toString().toStdString();
+            condition.relativeDistanceCondition.freespace = field(conditionprefix+"RelativeDistanceCondition.freespace").toString().toStdString();
+            condition.relativeDistanceCondition.rule = field(conditionprefix+"RelativeDistanceCondition.rule").toString().toStdString();
+            event.condition.push_back(condition);
+        }
+        story.eventlist.push_back(event);
+    }
+
+    int conditionnum = field("Story.startConditionNum").toInt();
+    for (int i = 0; i < conditionnum; ++i) {
+        Condition condition;
+        QString conditionprefix = "Story.StartCondition"+QString::number(i)+".";
+        condition.name = field(conditionprefix+"name").toString().toStdString();
+        condition.delay = field(conditionprefix+"delay").toString().toStdString();
+        condition.conditionEdge = field(conditionprefix+"conditionEdge").toString().toStdString();
+        condition.triggeringEntityRef = field("Actor."+field(conditionprefix+"triggeringEntityRef").toString()+".name").toString().toStdString();
+        QString type = field(conditionprefix+"type").toString();
+        if (type == "ParameterCondition") {
+            condition.type = PARAMETERCONDITION;
+        }
+        else if (type == "SimulationTimeCondition") {
+            condition.type = SIMULATIONTIMECONDITION;
+        }
+        else if (type == "StoryboardElementStateCondition") {
+            condition.type = STORYBOARDELEMENTSTATECONDITION;
+        }
+        else if (type == "StandStillCondition") {
+            condition.type = STANDSTILLCONDITION;
+        }
+        else if (type == "TraveledDistanceCondition") {
+            condition.type = TRAVELEDDISTANCECONDITION;
+        }
+        else if (type == "ReachPositionCondition") {
+            condition.type = REACHPOSITIONCONDITION;
+        }
+        else if (type == "RelativeDistanceCondition") {
+            condition.type = RELATIVEDISTANCECONDITION;
+        }
+        // ParameterCondition
+        condition.parameterCondition.parameterRef = field(conditionprefix+"ParameterCondition.parameterRef").toString().toStdString();
+        condition.parameterCondition.value = field(conditionprefix+"ParameterCondition.value").toString().toStdString();
+        condition.parameterCondition.rule = field(conditionprefix+"ParameterCondition.rule").toString().toStdString();
+
+        // SimulationTimeCondition
+        condition.simulationTimeCondition.value = field(conditionprefix+"SimulationTimeCondition.value").toString().toStdString();
+        condition.simulationTimeCondition.rule = field(conditionprefix+"SimulationTimeCondition.rule").toString().toStdString();
+
+        // StoryboardElementStateCondition
+        condition.storyboardElementStateCondition.storyboardElementType = field(conditionprefix+"StoryboardElementStateCondition.storyboardElementType").toString().toStdString();
+        condition.storyboardElementStateCondition.storyboardElementRef = field("Event."+field(conditionprefix+"StoryboardElementStateCondition.storyboardElementRef").toString()+".Action.name").toString().toStdString();
+        condition.storyboardElementStateCondition.state = field(conditionprefix+"StoryboardElementStateCondition.state").toString().toStdString();
+
+        // StandStillCondition
+        condition.standStillCondition.duration = field(conditionprefix+"StandStillCondition.duration").toString().toStdString();
+
+        // TraveledDistanceCondition
+        condition.traveledDistanceCondition.value = field(conditionprefix+"TraveledDistanceCondition.value").toString().toStdString();
+
+        // ReachPositionCondition
+        condition.reachPositionCondition.tolerance = field(conditionprefix+"ReachPositionCondition.tolerance").toString().toStdString();
+        type = field(conditionprefix+"ReachPositionCondition.Position.type").toString();
+        if (type == "WorldPosition") {
+            condition.reachPositionCondition.position.positiontype = WORLD;
+        }
+        else {
+            condition.reachPositionCondition.position.positiontype = LANE;
+        }
+        condition.reachPositionCondition.position.worldPosition.x = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.x").toString().toStdString();
+        condition.reachPositionCondition.position.worldPosition.y = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.y").toString().toStdString();
+        condition.reachPositionCondition.position.worldPosition.z = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.z").toString().toStdString();
+        condition.reachPositionCondition.position.worldPosition.h = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.h").toString().toStdString();
+        condition.reachPositionCondition.position.lanePosition.laneId = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.laneId").toString().toStdString();
+        condition.reachPositionCondition.position.lanePosition.roadId = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.roadId").toString().toStdString();
+        condition.reachPositionCondition.position.lanePosition.offset = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.offset").toString().toStdString();
+        condition.reachPositionCondition.position.lanePosition.s = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.s").toString().toStdString();
+
+        // RelativeDistanceCondition
+        condition.relativeDistanceCondition.entityRef = field("Actor."+field(conditionprefix+"RelativeDistanceCondition.entityRef").toString()+".name").toString().toStdString();
+        condition.relativeDistanceCondition.relativeDistanceType = field(conditionprefix+"RelativeDistanceCondition.relativeDistanceType").toString().toStdString();
+        condition.relativeDistanceCondition.value = field(conditionprefix+"RelativeDistanceCondition.value").toString().toStdString();
+        condition.relativeDistanceCondition.freespace = field(conditionprefix+"RelativeDistanceCondition.freespace").toString().toStdString();
+        condition.relativeDistanceCondition.rule = field(conditionprefix+"RelativeDistanceCondition.rule").toString().toStdString();
+        story.startCondition.push_back(condition);
+    }
+
+    conditionnum = field("Story.stopConditionNum").toInt();
+    for (int i = 0; i < conditionnum; ++i) {
+        Condition condition;
+        QString conditionprefix = "Story.StopCondition"+QString::number(i)+".";
+        condition.name = field(conditionprefix+"name").toString().toStdString();
+        condition.delay = field(conditionprefix+"delay").toString().toStdString();
+        condition.conditionEdge = field(conditionprefix+"conditionEdge").toString().toStdString();
+        condition.triggeringEntityRef = field("Actor."+field(conditionprefix+"triggeringEntityRef").toString()+".name").toString().toStdString();
+        QString type = field(conditionprefix+"type").toString();
+        if (type == "ParameterCondition") {
+            condition.type = PARAMETERCONDITION;
+        }
+        else if (type == "SimulationTimeCondition") {
+            condition.type = SIMULATIONTIMECONDITION;
+        }
+        else if (type == "StoryboardElementStateCondition") {
+            condition.type = STORYBOARDELEMENTSTATECONDITION;
+        }
+        else if (type == "StandStillCondition") {
+            condition.type = STANDSTILLCONDITION;
+        }
+        else if (type == "TraveledDistanceCondition") {
+            condition.type = TRAVELEDDISTANCECONDITION;
+        }
+        else if (type == "ReachPositionCondition") {
+            condition.type = REACHPOSITIONCONDITION;
+        }
+        else if (type == "RelativeDistanceCondition") {
+            condition.type = RELATIVEDISTANCECONDITION;
+        }
+        // ParameterCondition
+        condition.parameterCondition.parameterRef = field(conditionprefix+"ParameterCondition.parameterRef").toString().toStdString();
+        condition.parameterCondition.value = field(conditionprefix+"ParameterCondition.value").toString().toStdString();
+        condition.parameterCondition.rule = field(conditionprefix+"ParameterCondition.rule").toString().toStdString();
+
+        // SimulationTimeCondition
+        condition.simulationTimeCondition.value = field(conditionprefix+"SimulationTimeCondition.value").toString().toStdString();
+        condition.simulationTimeCondition.rule = field(conditionprefix+"SimulationTimeCondition.rule").toString().toStdString();
+
+        // StoryboardElementStateCondition
+        condition.storyboardElementStateCondition.storyboardElementType = field(conditionprefix+"StoryboardElementStateCondition.storyboardElementType").toString().toStdString();
+        condition.storyboardElementStateCondition.storyboardElementRef = field("Event."+field(conditionprefix+"StoryboardElementStateCondition.storyboardElementRef").toString()+".Action.name").toString().toStdString();
+        condition.storyboardElementStateCondition.state = field(conditionprefix+"StoryboardElementStateCondition.state").toString().toStdString();
+
+        // StandStillCondition
+        condition.standStillCondition.duration = field(conditionprefix+"StandStillCondition.duration").toString().toStdString();
+
+        // TraveledDistanceCondition
+        condition.traveledDistanceCondition.value = field(conditionprefix+"TraveledDistanceCondition.value").toString().toStdString();
+
+        // ReachPositionCondition
+        condition.reachPositionCondition.tolerance = field(conditionprefix+"ReachPositionCondition.tolerance").toString().toStdString();
+        type = field(conditionprefix+"ReachPositionCondition.Position.type").toString();
+        if (type == "WorldPosition") {
+            condition.reachPositionCondition.position.positiontype = WORLD;
+        }
+        else {
+            condition.reachPositionCondition.position.positiontype = LANE;
+        }
+        condition.reachPositionCondition.position.worldPosition.x = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.x").toString().toStdString();
+        condition.reachPositionCondition.position.worldPosition.y = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.y").toString().toStdString();
+        condition.reachPositionCondition.position.worldPosition.z = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.z").toString().toStdString();
+        condition.reachPositionCondition.position.worldPosition.h = field(conditionprefix+"ReachPositionCondition.Position.WorldPostion.h").toString().toStdString();
+        condition.reachPositionCondition.position.lanePosition.laneId = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.laneId").toString().toStdString();
+        condition.reachPositionCondition.position.lanePosition.roadId = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.roadId").toString().toStdString();
+        condition.reachPositionCondition.position.lanePosition.offset = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.offset").toString().toStdString();
+        condition.reachPositionCondition.position.lanePosition.s = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.s").toString().toStdString();
+
+        // RelativeDistanceCondition
+        condition.relativeDistanceCondition.entityRef = field("Actor."+field(conditionprefix+"RelativeDistanceCondition.entityRef").toString()+".name").toString().toStdString();
+        condition.relativeDistanceCondition.relativeDistanceType = field(conditionprefix+"RelativeDistanceCondition.relativeDistanceType").toString().toStdString();
+        condition.relativeDistanceCondition.value = field(conditionprefix+"RelativeDistanceCondition.value").toString().toStdString();
+        condition.relativeDistanceCondition.freespace = field(conditionprefix+"RelativeDistanceCondition.freespace").toString().toStdString();
+        condition.relativeDistanceCondition.rule = field(conditionprefix+"RelativeDistanceCondition.rule").toString().toStdString();
+        story.stopCondition.push_back(condition);
+    }
+    xosc.setStory(&story);
     // end - Story
 
     // begin - StopTrigger
@@ -1214,6 +1544,11 @@ SimulationTimeConditionGroupBox::SimulationTimeConditionGroupBox(QString str, QW
 StoryboardElementStateConditionGroupBox::StoryboardElementStateConditionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
     setTitle("StoryboardElementStateCondition");
+
+    storyboardElementTypeLabel = new QLabel("storyboardElementType:");
+    storyboardElementRefLabel = new QLabel("storyboardElementRef:");
+    stateLabel = new QLabel("state:");
+
     storyboardElementTypeComboBox = new QComboBox;
     storyboardElementRefComboBox = new QComboBox;
     stateComboBox = new QComboBox;
@@ -1224,6 +1559,9 @@ StoryboardElementStateConditionGroupBox::StoryboardElementStateConditionGroupBox
     storyboardElementTypeComboBox->addItem("event");
     storyboardElementTypeComboBox->addItem("action");
     storyboardElementTypeComboBox->addItem("maneuverGroup");
+    for (int i = 0; i < MAXEVENTNUM; ++i) {
+        storyboardElementRefComboBox->addItem("Event"+QString::number(i));
+    }
     stateComboBox->addItem("completeState");
     stateComboBox->addItem("startTransition");
     stateComboBox->addItem("endTransition");
@@ -1232,9 +1570,19 @@ StoryboardElementStateConditionGroupBox::StoryboardElementStateConditionGroupBox
     stateComboBox->addItem("runningState");
     stateComboBox->addItem("standbyState");
 
-    // TODO: storyboardElementRefComboBox
+    registerField(fieldprefix + "storyboardElementType", storyboardElementTypeComboBox, "currentText");
+    registerField(fieldprefix + "storyboardElementRef", storyboardElementRefComboBox, "currentText");
+    registerField(fieldprefix + "state", stateComboBox, "currentText");
 
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(storyboardElementTypeLabel, 0, 0);
+    layout->addWidget(storyboardElementRefLabel, 1, 0);
+    layout->addWidget(stateLabel, 2, 0);
 
+    layout->addWidget(storyboardElementTypeComboBox, 0, 1);
+    layout->addWidget(storyboardElementRefComboBox, 1, 1);
+    layout->addWidget(stateComboBox, 2, 1);
+    setLayout(layout);
 }
 StandStillConditionGroupBox::StandStillConditionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
@@ -1285,9 +1633,33 @@ RelativeDistanceConditionGroupBox::RelativeDistanceConditionGroupBox(QString str
     valueLabel = new QLabel("value:");
     freespaceLabel = new QLabel("freespace:");
     ruleLabel = new QLabel("rule:");
-    // TODO: ref
+
+
+    entityRefComboBox = new QComboBox;
+    relativeDistanceTypeComboBox = new QComboBox;
+    valueLineEdit = new QLineEdit;
+    freespaceComboBox = BooleanQComboBox(false, this);
+    ruleComboBox = RuleComboBox(-1, this);
+
+    for (int i = 0; i < MAXACTORNUM; ++i) {
+        entityRefComboBox->addItem("Actor"+QString::number(i));
+    }
+    relativeDistanceTypeComboBox->addItem("cartesianDistance");
+    relativeDistanceTypeComboBox->addItem("longitudinal");
+    relativeDistanceTypeComboBox->addItem("lateral");
 
     QGridLayout *layout = new QGridLayout;
+    layout->addWidget(entityRefLabel, 0, 0);
+    layout->addWidget(relativeDistanceTypeLabel, 1, 0);
+    layout->addWidget(valueLabel, 2, 0);
+    layout->addWidget(freespaceLabel, 3, 0);
+    layout->addWidget(ruleLabel, 4, 0);
+
+    layout->addWidget(entityRefComboBox, 0, 1);
+    layout->addWidget(relativeDistanceTypeComboBox, 1, 1);
+    layout->addWidget(valueLineEdit, 2, 1);
+    layout->addWidget(freespaceComboBox, 3, 1);
+    layout->addWidget(ruleComboBox, 4, 1);
     setLayout(layout);
 }
 
@@ -1427,6 +1799,8 @@ void ConditionGroupBox::updateConditionType()
 {
     QString type = typeComboBox->currentText();
     if (type == "ParameterCondition") {
+        triggeringEntityRefLabel->setVisible(false);
+        triggeringEntityRefComboBox->setVisible(false);
         parameterConditionGroupBox->setVisible(true);
         simulationTimeConditionGroupBox->setVisible(false);
         storyboardElementStateConditionGroupBox->setVisible(false);
@@ -1436,6 +1810,8 @@ void ConditionGroupBox::updateConditionType()
         relativeDistanceConditionGroupBox->setVisible(false);
     }
     else if (type == "SimulationTimeCondition") {
+        triggeringEntityRefLabel->setVisible(false);
+        triggeringEntityRefComboBox->setVisible(false);
         parameterConditionGroupBox->setVisible(false);
         simulationTimeConditionGroupBox->setVisible(true);
         storyboardElementStateConditionGroupBox->setVisible(false);
@@ -1445,6 +1821,8 @@ void ConditionGroupBox::updateConditionType()
         relativeDistanceConditionGroupBox->setVisible(false);
     }
     else if (type == "StoryboardElementStateCondition") {
+        triggeringEntityRefLabel->setVisible(false);
+        triggeringEntityRefComboBox->setVisible(false);
         parameterConditionGroupBox->setVisible(false);
         simulationTimeConditionGroupBox->setVisible(false);
         storyboardElementStateConditionGroupBox->setVisible(true);
@@ -1454,6 +1832,8 @@ void ConditionGroupBox::updateConditionType()
         relativeDistanceConditionGroupBox->setVisible(false);
     }
     else if (type == "StandStillCondition") {
+        triggeringEntityRefLabel->setVisible(true);
+        triggeringEntityRefComboBox->setVisible(true);
         parameterConditionGroupBox->setVisible(false);
         simulationTimeConditionGroupBox->setVisible(false);
         storyboardElementStateConditionGroupBox->setVisible(false);
@@ -1463,6 +1843,8 @@ void ConditionGroupBox::updateConditionType()
         relativeDistanceConditionGroupBox->setVisible(false);
     }
     else if (type == "TraveledDistanceCondition") {
+        triggeringEntityRefLabel->setVisible(true);
+        triggeringEntityRefComboBox->setVisible(true);
         parameterConditionGroupBox->setVisible(false);
         simulationTimeConditionGroupBox->setVisible(false);
         storyboardElementStateConditionGroupBox->setVisible(false);
@@ -1472,6 +1854,8 @@ void ConditionGroupBox::updateConditionType()
         relativeDistanceConditionGroupBox->setVisible(false);
     }
     else if (type == "ReachPositionCondition") {
+        triggeringEntityRefLabel->setVisible(true);
+        triggeringEntityRefComboBox->setVisible(true);
         parameterConditionGroupBox->setVisible(false);
         simulationTimeConditionGroupBox->setVisible(false);
         storyboardElementStateConditionGroupBox->setVisible(false);
@@ -1481,6 +1865,8 @@ void ConditionGroupBox::updateConditionType()
         relativeDistanceConditionGroupBox->setVisible(false);
     }
     else if (type == "RelativeDistanceCondition") {
+        triggeringEntityRefLabel->setVisible(true);
+        triggeringEntityRefComboBox->setVisible(true);
         parameterConditionGroupBox->setVisible(false);
         simulationTimeConditionGroupBox->setVisible(false);
         storyboardElementStateConditionGroupBox->setVisible(false);
@@ -1565,7 +1951,7 @@ int StoryPage::nextId() const
 EnvironmentActionGroupBox::EnvironmentActionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
     setTitle("EnvironmentAction");
-    environmentGroupBox = new EnvironmentGroupBox(fieldprefix, this);
+    environmentGroupBox = new EnvironmentGroupBox(fieldprefix+"Environment.", this);
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(environmentGroupBox, 0, 0);
     setLayout(layout);
@@ -1989,8 +2375,8 @@ StoryConditionPage::StoryConditionPage(QWidget *parent)
         }
         layout->addWidget(box, i+MAXCONDITIONNUM+2, 0, 1, 2);
     }
-    registerField(fieldprefix+"startConditionNumb", startConditionNumComboBox, "currentText");
-    registerField(fieldprefix+"stopConditionNumb", stopConditionNumComboBox, "currentText");
+    registerField(fieldprefix+"startConditionNum", startConditionNumComboBox, "currentText");
+    registerField(fieldprefix+"stopConditionNum", stopConditionNumComboBox, "currentText");
     QVector<QString>::iterator itername;
     QVector<QWidget*>::iterator iterwidget;
     QVector<const char*>::iterator iterproperty;
