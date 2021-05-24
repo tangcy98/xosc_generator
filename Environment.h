@@ -4,29 +4,29 @@
 #include "common.h"
 
 struct Environment {
-    const char *name;
-    const char *animation;
-    const char *dateTime;
-    const char *cloudState;
-    const char *sunintensity;
-    const char *azimuth;
-    const char *elevation;
-    const char *visualRange;
-    const char *precipitationType;
-    const char *precipitationintensity;
-    const char *frictionScaleFactor;
+    std::string name;
+    std::string animation;
+    std::string dateTime;
+    std::string cloudState;
+    std::string sunintensity;
+    std::string azimuth;
+    std::string elevation;
+    std::string visualRange;
+    std::string precipitationType;
+    std::string precipitationintensity;
+    std::string frictionScaleFactor;
     Environment(
-        const char *iname = NULL,
-        const char *ianimation = NULL,
-        const char *idateTime = NULL,
-        const char *icloudState = NULL,
-        const char *isunintensity = NULL,
-        const char *iazimuth = NULL,
-        const char *ielevation = NULL,
-        const char *ivisualRange = NULL,
-        const char *iprecipitationType = NULL,
-        const char *iprecipitationintensity = NULL,
-        const char *ifrictionScaleFactor = NULL
+        std::string iname = "",
+        std::string ianimation = "",
+        std::string idateTime = "",
+        std::string icloudState = "",
+        std::string isunintensity = "",
+        std::string iazimuth = "",
+        std::string ielevation = "",
+        std::string ivisualRange = "",
+        std::string iprecipitationType = "",
+        std::string iprecipitationintensity = "",
+        std::string ifrictionScaleFactor = ""
     ) {
         name = iname;
         animation = ianimation;

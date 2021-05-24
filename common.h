@@ -3,6 +3,8 @@
 #include <cstddef>
 #include <vector>
 #include <utility>
+#include <cstring>
+#include <string>
 
 struct Parameter {
     const char *name;

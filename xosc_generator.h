@@ -25,8 +25,8 @@ private:
 	vector<Actor> actorlist;
 	Environment environment;
 	Story story;
-
 	StopTrigger stopTrigger;
+	bool saveflag;
 public:
 	XOSC();
 	XOSC(const char *filepath);

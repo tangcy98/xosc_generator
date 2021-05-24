@@ -24,7 +24,6 @@ HEADERS       = \
     tinyxml2.h \
     xosc_generator.h
 SOURCES       = \
-                Actor.cpp \
                 Environment.cpp \
                 Story.cpp \
                 licensewizard.cpp \

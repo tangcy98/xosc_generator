@@ -1,6 +1,6 @@
 #include "xosc_generator.h"
 
-static tinyxml2::XMLElement* newStopConditionElement(tinyxml2::XMLDocument *doc,  const char *name, const char *pararef = NULL, const char *value = NULL)
+static tinyxml2::XMLElement* newStopConditionElement(tinyxml2::XMLDocument *doc,  const char *name, const char *pararef = "", const char *value = "")
 {
     // <Condition>
     tinyxml2::XMLElement *Condition = doc->NewElement("Condition");
@@ -30,9 +30,9 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 {
     // <Condition>
     tinyxml2::XMLElement *Condition = doc->NewElement("Condition");
-    Condition->SetAttribute("name", c->name);
-    Condition->SetAttribute("delay", c->delay);
-    Condition->SetAttribute("conditionEdge", c->conditionEdge);
+    Condition->SetAttribute("name", c->name.c_str());
+    Condition->SetAttribute("delay", c->delay.c_str());
+    Condition->SetAttribute("conditionEdge", c->conditionEdge.c_str());
 
     switch (c->type) {
         /** ByValueCondition **/
@@ -42,9 +42,9 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
             
             // <ParameterCondition>
             tinyxml2::XMLElement *ParameterCondition = doc->NewElement("ParameterCondition");
-            ParameterCondition->SetAttribute("parameterRef", c->parameterCondition.parameterRef);
-            ParameterCondition->SetAttribute("value", c->parameterCondition.value);
-            ParameterCondition->SetAttribute("rule", c->parameterCondition.rule);
+            ParameterCondition->SetAttribute("parameterRef", c->parameterCondition.parameterRef.c_str());
+            ParameterCondition->SetAttribute("value", c->parameterCondition.value.c_str());
+            ParameterCondition->SetAttribute("rule", c->parameterCondition.rule.c_str());
             ByValueCondition->LinkEndChild(ParameterCondition);
             // </ParameterCondition>
 
@@ -58,8 +58,8 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
             
             // <SimulationTimeCondition>
             tinyxml2::XMLElement *SimulationTimeCondition = doc->NewElement("SimulationTimeCondition");
-            SimulationTimeCondition->SetAttribute("value", c->simulationTimeCondition.value);
-            SimulationTimeCondition->SetAttribute("rule", c->simulationTimeCondition.rule);
+            SimulationTimeCondition->SetAttribute("value", c->simulationTimeCondition.value.c_str());
+            SimulationTimeCondition->SetAttribute("rule", c->simulationTimeCondition.rule.c_str());
             ByValueCondition->LinkEndChild(SimulationTimeCondition);
             // </SimulationTimeCondition>
 
@@ -73,9 +73,9 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
             
             // <StoryboardElementStateCondition>
             tinyxml2::XMLElement *StoryboardElementStateCondition = doc->NewElement("StoryboardElementStateCondition");
-            StoryboardElementStateCondition->SetAttribute("storyboardElementType", c->storyboardElementStateCondition.storyboardElementType);
-            StoryboardElementStateCondition->SetAttribute("storyboardElementRef", c->storyboardElementStateCondition.storyboardElementRef);
-            StoryboardElementStateCondition->SetAttribute("state", c->storyboardElementStateCondition.state);
+            StoryboardElementStateCondition->SetAttribute("storyboardElementType", c->storyboardElementStateCondition.storyboardElementType.c_str());
+            StoryboardElementStateCondition->SetAttribute("storyboardElementRef", c->storyboardElementStateCondition.storyboardElementRef.c_str());
+            StoryboardElementStateCondition->SetAttribute("state", c->storyboardElementStateCondition.state.c_str());
             ByValueCondition->LinkEndChild(StoryboardElementStateCondition);
             // </StoryboardElementStateCondition>
 
@@ -95,7 +95,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <EntityRef>
             tinyxml2::XMLElement *EntityRef = doc->NewElement("EntityRef");
-            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef);
+            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef.c_str());
             TriggeringEntities->LinkEndChild(EntityRef);
             // </EntityRef>
 
@@ -107,7 +107,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <StandStillCondition>
             tinyxml2::XMLElement *StandStillCondition = doc->NewElement("StandStillCondition");
-            StandStillCondition->SetAttribute("duration", c->standStillCondition.duration);
+            StandStillCondition->SetAttribute("duration", c->standStillCondition.duration.c_str());
             EntityCondition->LinkEndChild(StandStillCondition);
             // </StandStillCondition>
 
@@ -128,7 +128,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <EntityRef>
             tinyxml2::XMLElement *EntityRef = doc->NewElement("EntityRef");
-            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef);
+            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef.c_str());
             TriggeringEntities->LinkEndChild(EntityRef);
             // </EntityRef>
 
@@ -140,7 +140,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <TraveledDistanceCondition>
             tinyxml2::XMLElement *TraveledDistanceCondition = doc->NewElement("TraveledDistanceCondition");
-            TraveledDistanceCondition->SetAttribute("value", c->traveledDistanceCondition.value);
+            TraveledDistanceCondition->SetAttribute("value", c->traveledDistanceCondition.value.c_str());
             EntityCondition->LinkEndChild(TraveledDistanceCondition);
             // </TraveledDistanceCondition>
 
@@ -161,7 +161,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <EntityRef>
             tinyxml2::XMLElement *EntityRef = doc->NewElement("EntityRef");
-            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef);
+            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef.c_str());
             TriggeringEntities->LinkEndChild(EntityRef);
             // </EntityRef>
 
@@ -173,7 +173,32 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <ReachPositionCondition>
             tinyxml2::XMLElement *ReachPositionCondition = doc->NewElement("ReachPositionCondition");
-            ReachPositionCondition->SetAttribute("value", c->reachPositionCondition.tolerance);
+            ReachPositionCondition->SetAttribute("tolerance", c->reachPositionCondition.tolerance.c_str());
+            // <Position>
+            tinyxml2::XMLElement *Position = doc->NewElement("Position");
+
+            // <WorldPosition>, <LanePosition>
+            if (c->reachPositionCondition.position.positiontype == WORLD) {
+                tinyxml2::XMLElement *WorldPosition = doc->NewElement("WorldPosition");
+                WorldPosition->SetAttribute("x", c->reachPositionCondition.position.worldPosition.x.c_str());
+                WorldPosition->SetAttribute("y", c->reachPositionCondition.position.worldPosition.y.c_str());
+                WorldPosition->SetAttribute("z", c->reachPositionCondition.position.worldPosition.z.c_str());
+                WorldPosition->SetAttribute("h", c->reachPositionCondition.position.worldPosition.h.c_str());
+                Position->LinkEndChild(WorldPosition);
+            }
+            else if (c->reachPositionCondition.position.positiontype == LANE) {
+                tinyxml2::XMLElement *LanePosition = doc->NewElement("LanePosition");
+                LanePosition->SetAttribute("roadId", c->reachPositionCondition.position.lanePosition.roadId.c_str());
+                LanePosition->SetAttribute("laneId", c->reachPositionCondition.position.lanePosition.laneId.c_str());
+                LanePosition->SetAttribute("offset", c->reachPositionCondition.position.lanePosition.offset.c_str());
+                LanePosition->SetAttribute("s", c->reachPositionCondition.position.lanePosition.s.c_str());
+                Position->LinkEndChild(LanePosition);
+            }
+            // </WorldPosition>, </LanePosition>
+
+            ReachPositionCondition->LinkEndChild(Position);
+            // </Position>
+            
             EntityCondition->LinkEndChild(ReachPositionCondition);
             // </ReachPositionCondition>
 
@@ -194,7 +219,7 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <EntityRef>
             tinyxml2::XMLElement *EntityRef = doc->NewElement("EntityRef");
-            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef);
+            EntityRef->SetAttribute("entityRef", c->triggeringEntityRef.c_str());
             TriggeringEntities->LinkEndChild(EntityRef);
             // </EntityRef>
 
@@ -206,11 +231,11 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <RelativeDistanceCondition>
             tinyxml2::XMLElement *RelativeDistanceCondition = doc->NewElement("RelativeDistanceCondition");
-            RelativeDistanceCondition->SetAttribute("entityRef", c->relativeDistanceCondition.entityRef);
-            RelativeDistanceCondition->SetAttribute("relativeDistanceType", c->relativeDistanceCondition.relativeDistanceType);
-            RelativeDistanceCondition->SetAttribute("value", c->relativeDistanceCondition.value);
-            RelativeDistanceCondition->SetAttribute("freespace", c->relativeDistanceCondition.freespace);
-            RelativeDistanceCondition->SetAttribute("rule", c->relativeDistanceCondition.rule);
+            RelativeDistanceCondition->SetAttribute("entityRef", c->relativeDistanceCondition.entityRef.c_str());
+            RelativeDistanceCondition->SetAttribute("relativeDistanceType", c->relativeDistanceCondition.relativeDistanceType.c_str());
+            RelativeDistanceCondition->SetAttribute("value", c->relativeDistanceCondition.value.c_str());
+            RelativeDistanceCondition->SetAttribute("freespace", c->relativeDistanceCondition.freespace.c_str());
+            RelativeDistanceCondition->SetAttribute("rule", c->relativeDistanceCondition.rule.c_str());
             EntityCondition->LinkEndChild(RelativeDistanceCondition);
             // </RelativeDistanceCondition>
 
@@ -235,17 +260,20 @@ XOSC::XOSC()
     doc = NULL;
     OpenSCENARIO = NULL;
     actornum = 0;
+    saveflag = false;
 
     // environment, stopTrigger is already constructed;
 }
 
 XOSC::~XOSC()
 {
-	if (tinyxml2::XML_SUCCESS != doc->SaveFile(savepath)) {
-        printf("Save failed..\n");
-    }
-    else {
-        printf("Save succeed!\n");
+    if (!saveflag) {
+        if (tinyxml2::XML_SUCCESS != doc->SaveFile(savepath)) {
+            printf("Save failed..\n");
+        }
+        else {
+            printf("Save succeed!\n");
+        }
     }
     delete doc;
 }
@@ -315,7 +343,6 @@ SETRES XOSC::setFilename(const char *file)
     if (!elem) return SET_ERROR;
     elem->SetAttribute("description", description);
 
-    // TODO: Set Maneuver name
     return SET_OK;
 }
 
@@ -380,27 +407,27 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
     if (!Entities) return SET_ERROR;
     // <ScenarioObject>
     tinyxml2::XMLElement *ScenarioObject = doc->NewElement("ScenarioObject");
-    ScenarioObject->SetAttribute("name", actor->objname);
+    ScenarioObject->SetAttribute("name", actor->objname.c_str());
     tinyxml2::XMLElement *ActorElem;
 
     // <Vehicle>, <Pedestrian>, <MiscObject>
     if (actor->actortype == VEHICLE) {
         ActorElem = doc->NewElement("Vehicle");
-        ActorElem->SetAttribute("name", actor->name);
-        ActorElem->SetAttribute("vehicleCategory", actor->category);
+        ActorElem->SetAttribute("name", actor->name.c_str());
+        ActorElem->SetAttribute("vehicleCategory", actor->category.c_str());
     }
     else if (actor->actortype == PEDESTRIAN) {
         ActorElem = doc->NewElement("Pedestrian");
-        ActorElem->SetAttribute("model", actor->pedparas.model);
-        ActorElem->SetAttribute("mass", actor->pedparas.mass);
-        ActorElem->SetAttribute("name", actor->name);
-        ActorElem->SetAttribute("pedestrianCategory", actor->category);
+        ActorElem->SetAttribute("model", actor->pedparas.model.c_str());
+        ActorElem->SetAttribute("mass", actor->pedparas.mass.c_str());
+        ActorElem->SetAttribute("name", actor->name.c_str());
+        ActorElem->SetAttribute("pedestrianCategory", actor->category.c_str());
     }
     else if (actor->actortype == MISCOBJECT) {
         ActorElem = doc->NewElement("MiscObject");
-        ActorElem->SetAttribute("mass", actor->miscparas.mass);
-        ActorElem->SetAttribute("name", actor->name);
-        ActorElem->SetAttribute("miscObjectCategory", actor->category);
+        ActorElem->SetAttribute("mass", actor->miscparas.mass.c_str());
+        ActorElem->SetAttribute("name", actor->name.c_str());
+        ActorElem->SetAttribute("miscObjectCategory", actor->category.c_str());
     }
 
     // <ParameterDeclarations>
@@ -420,9 +447,9 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
     if (actor->actortype == VEHICLE) {
         // <Performance>
         tinyxml2::XMLElement *Performance = doc->NewElement("Performance");
-        Performance->SetAttribute("maxSpeed", actor->vehparas.maxSpeed);
-        Performance->SetAttribute("maxAcceleration", actor->vehparas.maxAcceleration);
-        Performance->SetAttribute("maxDeceleration", actor->vehparas.maxDeceleration);
+        Performance->SetAttribute("maxSpeed", actor->vehparas.maxSpeed.c_str());
+        Performance->SetAttribute("maxAcceleration", actor->vehparas.maxAcceleration.c_str());
+        Performance->SetAttribute("maxDeceleration", actor->vehparas.maxDeceleration.c_str());
         ActorElem->LinkEndChild(Performance);
         // </Performance>
     }
@@ -432,17 +459,17 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
 
     // <Center>
     tinyxml2::XMLElement *Center = doc->NewElement("Center");
-    Center->SetAttribute("x", actor->boundingx);
-    Center->SetAttribute("y", actor->boundingy);
-    Center->SetAttribute("z", actor->boundingz);
+    Center->SetAttribute("x", actor->boundingx.c_str());
+    Center->SetAttribute("y", actor->boundingy.c_str());
+    Center->SetAttribute("z", actor->boundingz.c_str());
     BoundingBox->LinkEndChild(Center);
     // </Center>
 
     // <Dimensions>
     tinyxml2::XMLElement *Dimensions = doc->NewElement("Dimensions");
-    Dimensions->SetAttribute("width", actor->boundingw);
-    Dimensions->SetAttribute("length", actor->boundingl);
-    Dimensions->SetAttribute("height", actor->boundingh);
+    Dimensions->SetAttribute("width", actor->boundingw.c_str());
+    Dimensions->SetAttribute("length", actor->boundingl.c_str());
+    Dimensions->SetAttribute("height", actor->boundingh.c_str());
     BoundingBox->LinkEndChild(Dimensions);
     // </Dimensions>
 
@@ -455,21 +482,21 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
 
         // <FrontAxle>
         tinyxml2::XMLElement *FrontAxle = doc->NewElement("FrontAxle");
-        FrontAxle->SetAttribute("maxSteering", actor->vehparas.frontAxleMaxSteering);
-        FrontAxle->SetAttribute("wheelDiameter", actor->vehparas.frontAxleWheelDiameter);
-        FrontAxle->SetAttribute("trackWidth", actor->vehparas.frontAxleTrackWidth);
-        FrontAxle->SetAttribute("positionX", actor->vehparas.frontAxlePositionX);
-        FrontAxle->SetAttribute("positionZ", actor->vehparas.frontAxlePositionZ);
+        FrontAxle->SetAttribute("maxSteering", actor->vehparas.frontAxleMaxSteering.c_str());
+        FrontAxle->SetAttribute("wheelDiameter", actor->vehparas.frontAxleWheelDiameter.c_str());
+        FrontAxle->SetAttribute("trackWidth", actor->vehparas.frontAxleTrackWidth.c_str());
+        FrontAxle->SetAttribute("positionX", actor->vehparas.frontAxlePositionX.c_str());
+        FrontAxle->SetAttribute("positionZ", actor->vehparas.frontAxlePositionZ.c_str());
         Axles->LinkEndChild(FrontAxle);
         // </FrontAxle>
 
         // <RearAxle>
         tinyxml2::XMLElement *RearAxle = doc->NewElement("RearAxle");
-        RearAxle->SetAttribute("maxSteering", actor->vehparas.rearAxleMaxSteering);
-        RearAxle->SetAttribute("wheelDiameter", actor->vehparas.rearAxleWheelDiameter);
-        RearAxle->SetAttribute("trackWidth", actor->vehparas.rearAxleTrackWidth);
-        RearAxle->SetAttribute("positionX", actor->vehparas.rearAxlePositionX);
-        RearAxle->SetAttribute("positionZ", actor->vehparas.rearAxlePositionZ);
+        RearAxle->SetAttribute("maxSteering", actor->vehparas.rearAxleMaxSteering.c_str());
+        RearAxle->SetAttribute("wheelDiameter", actor->vehparas.rearAxleWheelDiameter.c_str());
+        RearAxle->SetAttribute("trackWidth", actor->vehparas.rearAxleTrackWidth.c_str());
+        RearAxle->SetAttribute("positionX", actor->vehparas.rearAxlePositionX.c_str());
+        RearAxle->SetAttribute("positionZ", actor->vehparas.rearAxlePositionZ.c_str());
         Axles->LinkEndChild(RearAxle);
         // </RearAxle>
         
@@ -483,8 +510,8 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
     for (auto iter = actor->props.begin(); iter != actor->props.end(); iter++) {
         // <Property>
         tinyxml2::XMLElement *Property = doc->NewElement("Property");
-        Property->SetAttribute("name", iter->first);
-        Property->SetAttribute("value", iter->second);
+        Property->SetAttribute("name", iter->first.c_str());
+        Property->SetAttribute("value", iter->second.c_str());
         Properties->LinkEndChild(Property);
         // </Property>
     }
@@ -508,7 +535,7 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
 
     // <Private>
     tinyxml2::XMLElement *Private = doc->NewElement("Private");
-    Private->SetAttribute("entityRef", actor->objname);
+    Private->SetAttribute("entityRef", actor->objname.c_str());
 
     // <PrivateAction>
     tinyxml2::XMLElement *PrivateAction = doc->NewElement("PrivateAction");
@@ -522,18 +549,18 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
     // <WorldPosition>, <LanePosition>
     if (actor->position.positiontype == WORLD) {
         tinyxml2::XMLElement *WorldPosition = doc->NewElement("WorldPosition");
-        WorldPosition->SetAttribute("x", actor->position.worldPosition.x);
-        WorldPosition->SetAttribute("y", actor->position.worldPosition.y);
-        WorldPosition->SetAttribute("z", actor->position.worldPosition.z);
-        WorldPosition->SetAttribute("h", actor->position.worldPosition.h);
+        WorldPosition->SetAttribute("x", actor->position.worldPosition.x.c_str());
+        WorldPosition->SetAttribute("y", actor->position.worldPosition.y.c_str());
+        WorldPosition->SetAttribute("z", actor->position.worldPosition.z.c_str());
+        WorldPosition->SetAttribute("h", actor->position.worldPosition.h.c_str());
         Position->LinkEndChild(WorldPosition);
     }
     else if (actor->position.positiontype == LANE) {
         tinyxml2::XMLElement *LanePosition = doc->NewElement("LanePosition");
-        LanePosition->SetAttribute("roadId", actor->position.lanePosition.roadId);
-        LanePosition->SetAttribute("laneId", actor->position.lanePosition.laneId);
-        LanePosition->SetAttribute("offset", actor->position.lanePosition.offset);
-        LanePosition->SetAttribute("s", actor->position.lanePosition.s);
+        LanePosition->SetAttribute("roadId", actor->position.lanePosition.roadId.c_str());
+        LanePosition->SetAttribute("laneId", actor->position.lanePosition.laneId.c_str());
+        LanePosition->SetAttribute("offset", actor->position.lanePosition.offset.c_str());
+        LanePosition->SetAttribute("s", actor->position.lanePosition.s.c_str());
         Position->LinkEndChild(LanePosition);
     }
     // </WorldPosition>, </LanePosition>
@@ -561,15 +588,15 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
 
         // <Controller>
         tinyxml2::XMLElement *Controller = doc ->NewElement("Controller");
-        Controller->SetAttribute("name", actor->vehparas.controllerName);
+        Controller->SetAttribute("name", actor->vehparas.controllerName.c_str());
 
         // <Properties>
         tinyxml2::XMLElement *Properties = doc ->NewElement("Properties");
         for (auto iter = actor->vehparas.controllerprops.begin(); iter != actor->vehparas.controllerprops.end(); iter++) {
             // <Property>
             tinyxml2::XMLElement *Property = doc->NewElement("Property");
-            Property->SetAttribute("name", iter->first);
-            Property->SetAttribute("value", iter->second);
+            Property->SetAttribute("name", iter->first.c_str());
+            Property->SetAttribute("value", iter->second.c_str());
             Properties->LinkEndChild(Property);
             // </Property>
         }
@@ -593,18 +620,18 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
         tinyxml2::XMLElement *SteeringWheel = doc->NewElement("SteeringWheel");
         tinyxml2::XMLElement *Gear = doc->NewElement("Gear");
 
-        Throttle->SetAttribute("value", actor->vehparas.Throttle.first);
-        Throttle->SetAttribute("active", actor->vehparas.Throttle.second);
-        Brake->SetAttribute("value", actor->vehparas.Brake.first);
-        Brake->SetAttribute("active", actor->vehparas.Brake.second);
-        Clutch->SetAttribute("value", actor->vehparas.Clutch.first);
-        Clutch->SetAttribute("active", actor->vehparas.Clutch.second);
-        ParkingBrake->SetAttribute("value", actor->vehparas.ParkingBrake.first);
-        ParkingBrake->SetAttribute("active", actor->vehparas.ParkingBrake.second);
-        SteeringWheel->SetAttribute("value", actor->vehparas.SteeringWheel.first);
-        SteeringWheel->SetAttribute("active", actor->vehparas.SteeringWheel.second);
-        Gear->SetAttribute("number", actor->vehparas.Gear.first);
-        Gear->SetAttribute("active", actor->vehparas.Gear.second);
+        Throttle->SetAttribute("value", actor->vehparas.Throttle.first.c_str());
+        Throttle->SetAttribute("active", actor->vehparas.Throttle.second.c_str());
+        Brake->SetAttribute("value", actor->vehparas.Brake.first.c_str());
+        Brake->SetAttribute("active", actor->vehparas.Brake.second.c_str());
+        Clutch->SetAttribute("value", actor->vehparas.Clutch.first.c_str());
+        Clutch->SetAttribute("active", actor->vehparas.Clutch.second.c_str());
+        ParkingBrake->SetAttribute("value", actor->vehparas.ParkingBrake.first.c_str());
+        ParkingBrake->SetAttribute("active", actor->vehparas.ParkingBrake.second.c_str());
+        SteeringWheel->SetAttribute("value", actor->vehparas.SteeringWheel.first.c_str());
+        SteeringWheel->SetAttribute("active", actor->vehparas.SteeringWheel.second.c_str());
+        Gear->SetAttribute("number", actor->vehparas.Gear.first.c_str());
+        Gear->SetAttribute("active", actor->vehparas.Gear.second.c_str());
 
         OverrideControllerValueAction->LinkEndChild(Throttle);
         OverrideControllerValueAction->LinkEndChild(Brake);
@@ -631,17 +658,7 @@ SETRES XOSC::setActor(const int n, const Actor *actor)
 
 SETRES XOSC::setEnvironment(const Environment *env)
 {
-    environment.name = env->name;
-    environment.animation = env->animation;
-    environment.dateTime = env->dateTime;
-    environment.cloudState = env->cloudState;
-    environment.sunintensity = env->sunintensity;
-    environment.azimuth = env->azimuth;
-    environment.elevation = env->elevation;
-    environment.visualRange = env->visualRange;
-    environment.precipitationType = env->precipitationType;
-    environment.precipitationintensity = env->precipitationintensity;
-    environment.frictionScaleFactor = env->frictionScaleFactor;
+    environment = *env;
     tinyxml2::XMLElement *Storyboard = OpenSCENARIO->FirstChildElement("Storyboard");
     
     // <Init>
@@ -658,37 +675,37 @@ SETRES XOSC::setEnvironment(const Environment *env)
 
     // <Environment>
     tinyxml2::XMLElement *EnvironmentElem = doc->NewElement("Environment");
-    EnvironmentElem->SetAttribute("name", env->name);
+    EnvironmentElem->SetAttribute("name", env->name.c_str());
 
     // <TimeOfDay>
     tinyxml2::XMLElement *TimeOfDay = doc->NewElement("TimeOfDay");
-    TimeOfDay->SetAttribute("animation", env->animation);
-    TimeOfDay->SetAttribute("dateTime", env->dateTime);
+    TimeOfDay->SetAttribute("animation", env->animation.c_str());
+    TimeOfDay->SetAttribute("dateTime", env->dateTime.c_str());
     EnvironmentElem->LinkEndChild(TimeOfDay);
     // </TimeOfDay>
 
     // <Weather>
     tinyxml2::XMLElement *Weather = doc->NewElement("Weather");
-    Weather->SetAttribute("cloudState", env->cloudState);
+    Weather->SetAttribute("cloudState", env->cloudState.c_str());
 
     // <Sun>
     tinyxml2::XMLElement *Sun = doc->NewElement("Sun");
-    Sun->SetAttribute("intensity", env->sunintensity);
-    Sun->SetAttribute("azimuth", env->azimuth);
-    Sun->SetAttribute("elevation", env->elevation);
+    Sun->SetAttribute("intensity", env->sunintensity.c_str());
+    Sun->SetAttribute("azimuth", env->azimuth.c_str());
+    Sun->SetAttribute("elevation", env->elevation.c_str());
     Weather->LinkEndChild(Sun);
     // </Sun>
 
     // <Fog>
     tinyxml2::XMLElement *Fog = doc->NewElement("Fog");
-    Fog->SetAttribute("visualRange", env->visualRange);
+    Fog->SetAttribute("visualRange", env->visualRange.c_str());
     Weather->LinkEndChild(Fog);
     // </Fog>
 
     // <Precipitation>
     tinyxml2::XMLElement *Precipitation = doc->NewElement("Precipitation");
-    Precipitation->SetAttribute("precipitationType", env->precipitationType);
-    Precipitation->SetAttribute("intensity", env->precipitationintensity);
+    Precipitation->SetAttribute("precipitationType", env->precipitationType.c_str());
+    Precipitation->SetAttribute("intensity", env->precipitationintensity.c_str());
     Weather->LinkEndChild(Precipitation);
     // </Precipitation>
 
@@ -697,7 +714,7 @@ SETRES XOSC::setEnvironment(const Environment *env)
 
     // <RoadCondition>
     tinyxml2::XMLElement *RoadCondition = doc->NewElement("RoadCondition");
-    RoadCondition->SetAttribute("frictionScaleFactor", env->frictionScaleFactor);
+    RoadCondition->SetAttribute("frictionScaleFactor", env->frictionScaleFactor.c_str());
     EnvironmentElem->LinkEndChild(RoadCondition);
     // </RoadCondition>
 
@@ -794,24 +811,24 @@ SETRES XOSC::setStory(const Story *s)
 
     // <Story>
     tinyxml2::XMLElement *Story = doc->NewElement("Story");
-    Story->SetAttribute("name", s->storyName);
+    Story->SetAttribute("name", s->storyName.c_str());
 
     // <Act>
     tinyxml2::XMLElement *Act = doc->NewElement("Act");
-    Act->SetAttribute("name", s->actName);
+    Act->SetAttribute("name", s->actName.c_str());
 
     // <ManeuverGroup>
     tinyxml2::XMLElement *ManeuverGroup = doc->NewElement("ManeuverGroup");
-    ManeuverGroup->SetAttribute("maximumExecutionCount", s->maximumExecutionCount);
-    ManeuverGroup->SetAttribute("name", s->maneuverGroupName);
+    ManeuverGroup->SetAttribute("maximumExecutionCount", s->maximumExecutionCount.c_str());
+    ManeuverGroup->SetAttribute("name", s->maneuverGroupName.c_str());
 
     // <Actors>
     tinyxml2::XMLElement *Actors = doc->NewElement("Actors");
-    Actors->SetAttribute("selectTriggeringEntities", s->selectTriggeringEntities);
+    Actors->SetAttribute("selectTriggeringEntities", s->selectTriggeringEntities.c_str());
 
     // <EntityRef>
     tinyxml2::XMLElement *EntityRef = doc->NewElement("EntityRef");
-    EntityRef->SetAttribute("entityRef", s->entityRef);
+    EntityRef->SetAttribute("entityRef", s->entityRef.c_str());
     Actors->LinkEndChild(EntityRef);
     // </EntityRef>
 
@@ -820,17 +837,17 @@ SETRES XOSC::setStory(const Story *s)
 
     // <Maneuver>
     tinyxml2::XMLElement *Maneuver = doc->NewElement("Maneuver");
-    Maneuver->SetAttribute("name", s->maneuverName);
+    Maneuver->SetAttribute("name", s->maneuverName.c_str());
 
     for (auto iter = s->eventlist.begin(); iter != s->eventlist.end(); iter++) {
         // <Event>
         tinyxml2::XMLElement *Event = doc->NewElement("Event");
-        Event->SetAttribute("name", iter->name);
-        Event->SetAttribute("priority", iter->priority);
+        Event->SetAttribute("name", iter->name.c_str());
+        Event->SetAttribute("priority", iter->priority.c_str());
 
         // <Action>
         tinyxml2::XMLElement *Action = doc->NewElement("Action");
-        Action->SetAttribute("name", iter->action.name);
+        Action->SetAttribute("name", iter->action.name.c_str());
 
         switch (iter->action.actionType) {
             case ENVIRONMENTACTION: {
@@ -841,37 +858,37 @@ SETRES XOSC::setStory(const Story *s)
 
                 // <Environment>
                 tinyxml2::XMLElement *EnvironmentElem = doc->NewElement("Environment");
-                EnvironmentElem->SetAttribute("name", iter->action.environmentAction.environment.name);
+                EnvironmentElem->SetAttribute("name", iter->action.environmentAction.environment.name.c_str());
 
                 // <TimeOfDay>
                 tinyxml2::XMLElement *TimeOfDay = doc->NewElement("TimeOfDay");
-                TimeOfDay->SetAttribute("animation", iter->action.environmentAction.environment.animation);
-                TimeOfDay->SetAttribute("dateTime", iter->action.environmentAction.environment.dateTime);
+                TimeOfDay->SetAttribute("animation", iter->action.environmentAction.environment.animation.c_str());
+                TimeOfDay->SetAttribute("dateTime", iter->action.environmentAction.environment.dateTime.c_str());
                 EnvironmentElem->LinkEndChild(TimeOfDay);
                 // </TimeOfDay>
 
                 // <Weather>
                 tinyxml2::XMLElement *Weather = doc->NewElement("Weather");
-                Weather->SetAttribute("cloudState", iter->action.environmentAction.environment.cloudState);
+                Weather->SetAttribute("cloudState", iter->action.environmentAction.environment.cloudState.c_str());
 
                 // <Sun>
                 tinyxml2::XMLElement *Sun = doc->NewElement("Sun");
-                Sun->SetAttribute("intensity", iter->action.environmentAction.environment.sunintensity);
-                Sun->SetAttribute("azimuth", iter->action.environmentAction.environment.azimuth);
-                Sun->SetAttribute("elevation", iter->action.environmentAction.environment.elevation);
+                Sun->SetAttribute("intensity", iter->action.environmentAction.environment.sunintensity.c_str());
+                Sun->SetAttribute("azimuth", iter->action.environmentAction.environment.azimuth.c_str());
+                Sun->SetAttribute("elevation", iter->action.environmentAction.environment.elevation.c_str());
                 Weather->LinkEndChild(Sun);
                 // </Sun>
 
                 // <Fog>
                 tinyxml2::XMLElement *Fog = doc->NewElement("Fog");
-                Fog->SetAttribute("visualRange", iter->action.environmentAction.environment.visualRange);
+                Fog->SetAttribute("visualRange", iter->action.environmentAction.environment.visualRange.c_str());
                 Weather->LinkEndChild(Fog);
                 // </Fog>
 
                 // <Precipitation>
                 tinyxml2::XMLElement *Precipitation = doc->NewElement("Precipitation");
-                Precipitation->SetAttribute("precipitationType", iter->action.environmentAction.environment.precipitationType);
-                Precipitation->SetAttribute("intensity", iter->action.environmentAction.environment.precipitationintensity);
+                Precipitation->SetAttribute("precipitationType", iter->action.environmentAction.environment.precipitationType.c_str());
+                Precipitation->SetAttribute("intensity", iter->action.environmentAction.environment.precipitationintensity.c_str());
                 Weather->LinkEndChild(Precipitation);
                 // </Precipitation>
 
@@ -880,7 +897,7 @@ SETRES XOSC::setStory(const Story *s)
 
                 // <RoadCondition>
                 tinyxml2::XMLElement *RoadCondition = doc->NewElement("RoadCondition");
-                RoadCondition->SetAttribute("frictionScaleFactor", iter->action.environmentAction.environment.frictionScaleFactor);
+                RoadCondition->SetAttribute("frictionScaleFactor", iter->action.environmentAction.environment.frictionScaleFactor.c_str());
                 EnvironmentElem->LinkEndChild(RoadCondition);
                 // </RoadCondition>
 
@@ -897,7 +914,7 @@ SETRES XOSC::setStory(const Story *s)
             case LONGITUDINALACTION: {
                 // <PrivateAction>
                 tinyxml2::XMLElement *PrivateAction = doc->NewElement("PrivateAction");
-                // TODO: Add support for LongitudinalDistanceAction
+                // LongitudinalDistanceAction is now unsupported
                 // <LongitudinalAction>
                 tinyxml2::XMLElement *LongitudinalAction = doc->NewElement("LongitudinalAction");
                 
@@ -906,9 +923,9 @@ SETRES XOSC::setStory(const Story *s)
 
                 // <SpeedActionDynamics>
                 tinyxml2::XMLElement *SpeedActionDynamics = doc->NewElement("SpeedActionDynamics");
-                SpeedActionDynamics->SetAttribute("dynamicsShape", iter->action.longitudinalAction.dynamicsShape);
-                SpeedActionDynamics->SetAttribute("value", iter->action.longitudinalAction.dynamicsvalue);
-                SpeedActionDynamics->SetAttribute("dynamicsDimension", iter->action.longitudinalAction.dynamicsDimension);
+                SpeedActionDynamics->SetAttribute("dynamicsShape", iter->action.longitudinalAction.dynamicsShape.c_str());
+                SpeedActionDynamics->SetAttribute("value", iter->action.longitudinalAction.dynamicsvalue.c_str());
+                SpeedActionDynamics->SetAttribute("dynamicsDimension", iter->action.longitudinalAction.dynamicsDimension.c_str());
                 SpeedAction->LinkEndChild(SpeedActionDynamics);
                 // </SpeedActionDynamics>
 
@@ -917,7 +934,7 @@ SETRES XOSC::setStory(const Story *s)
                 
                 // <AbsoluteTargetSpeed>
                 tinyxml2::XMLElement *AbsoluteTargetSpeed = doc->NewElement("AbsoluteTargetSpeed");
-                AbsoluteTargetSpeed->SetAttribute("value", iter->action.longitudinalAction.targetvalue);
+                AbsoluteTargetSpeed->SetAttribute("value", iter->action.longitudinalAction.targetvalue.c_str());
                 SpeedActionTarget->LinkEndChild(AbsoluteTargetSpeed);
                 // </AbsoluteTargetSpeed>
 
@@ -946,9 +963,9 @@ SETRES XOSC::setStory(const Story *s)
 
                 // <LaneChangeActionDynamics>
                 tinyxml2::XMLElement *LaneChangeActionDynamics = doc->NewElement("LaneChangeActionDynamics");
-                LaneChangeActionDynamics->SetAttribute("dynamicsShape", iter->action.lateralAction.dynamicsShape);
-                LaneChangeActionDynamics->SetAttribute("value", iter->action.lateralAction.dynamicsvalue);
-                LaneChangeActionDynamics->SetAttribute("dynamicsDimension", iter->action.lateralAction.dynamicsDimension);
+                LaneChangeActionDynamics->SetAttribute("dynamicsShape", iter->action.lateralAction.dynamicsShape.c_str());
+                LaneChangeActionDynamics->SetAttribute("value", iter->action.lateralAction.dynamicsvalue.c_str());
+                LaneChangeActionDynamics->SetAttribute("dynamicsDimension", iter->action.lateralAction.dynamicsDimension.c_str());
                 LaneChangeAction->LinkEndChild(LaneChangeActionDynamics);
                 // </LaneChangeActionDynamics>
 
@@ -957,8 +974,8 @@ SETRES XOSC::setStory(const Story *s)
 
                 // <RelativeTargetLane>
                 tinyxml2::XMLElement *RelativeTargetLane = doc->NewElement("RelativeTargetLane");
-                RelativeTargetLane->SetAttribute("entityRef", iter->action.lateralAction.targetentityRef);
-                RelativeTargetLane->SetAttribute("value", iter->action.lateralAction.targetvalue);
+                RelativeTargetLane->SetAttribute("entityRef", iter->action.lateralAction.targetentityRef.c_str());
+                RelativeTargetLane->SetAttribute("value", iter->action.lateralAction.targetvalue.c_str());
                 LaneChangeTarget->LinkEndChild(RelativeTargetLane);
                 // </RelativeTargetLane>
 
@@ -981,25 +998,25 @@ SETRES XOSC::setStory(const Story *s)
                 
                 // <SynchronizeAction>
                 tinyxml2::XMLElement *SynchronizeAction = doc->NewElement("SynchronizeAction");
-                SynchronizeAction->SetAttribute("masterEntityRef", iter->action.synchronizeAction.masterEntityRef);
+                SynchronizeAction->SetAttribute("masterEntityRef", iter->action.synchronizeAction.masterEntityRef.c_str());
 
                 // <TargetPositionMaster>
                 tinyxml2::XMLElement *TargetPositionMaster = doc->NewElement("TargetPositionMaster");
                 // <WorldPosition>, <LanePosition>
                 if (iter->action.synchronizeAction.targetPositionMaster.positiontype == WORLD) {
                     tinyxml2::XMLElement *WorldPosition = doc->NewElement("WorldPosition");
-                    WorldPosition->SetAttribute("x", iter->action.synchronizeAction.targetPositionMaster.worldPosition.x);
-                    WorldPosition->SetAttribute("y", iter->action.synchronizeAction.targetPositionMaster.worldPosition.y);
-                    WorldPosition->SetAttribute("z", iter->action.synchronizeAction.targetPositionMaster.worldPosition.z);
-                    WorldPosition->SetAttribute("h", iter->action.synchronizeAction.targetPositionMaster.worldPosition.h);
+                    WorldPosition->SetAttribute("x", iter->action.synchronizeAction.targetPositionMaster.worldPosition.x.c_str());
+                    WorldPosition->SetAttribute("y", iter->action.synchronizeAction.targetPositionMaster.worldPosition.y.c_str());
+                    WorldPosition->SetAttribute("z", iter->action.synchronizeAction.targetPositionMaster.worldPosition.z.c_str());
+                    WorldPosition->SetAttribute("h", iter->action.synchronizeAction.targetPositionMaster.worldPosition.h.c_str());
                     TargetPositionMaster->LinkEndChild(WorldPosition);
                 }
                 else if (iter->action.synchronizeAction.targetPositionMaster.positiontype == LANE) {
                     tinyxml2::XMLElement *LanePosition = doc->NewElement("LanePosition");
-                    LanePosition->SetAttribute("roadId", iter->action.synchronizeAction.targetPositionMaster.lanePosition.roadId);
-                    LanePosition->SetAttribute("laneId", iter->action.synchronizeAction.targetPositionMaster.lanePosition.laneId);
-                    LanePosition->SetAttribute("offset", iter->action.synchronizeAction.targetPositionMaster.lanePosition.offset);
-                    LanePosition->SetAttribute("s", iter->action.synchronizeAction.targetPositionMaster.lanePosition.s);
+                    LanePosition->SetAttribute("roadId", iter->action.synchronizeAction.targetPositionMaster.lanePosition.roadId.c_str());
+                    LanePosition->SetAttribute("laneId", iter->action.synchronizeAction.targetPositionMaster.lanePosition.laneId.c_str());
+                    LanePosition->SetAttribute("offset", iter->action.synchronizeAction.targetPositionMaster.lanePosition.offset.c_str());
+                    LanePosition->SetAttribute("s", iter->action.synchronizeAction.targetPositionMaster.lanePosition.s.c_str());
                     TargetPositionMaster->LinkEndChild(LanePosition);
                 }
                 // </WorldPosition>, </LanePosition>
@@ -1012,18 +1029,18 @@ SETRES XOSC::setStory(const Story *s)
                 // <WorldPosition>, <LanePosition>
                 if (iter->action.synchronizeAction.targetPosition.positiontype == WORLD) {
                     tinyxml2::XMLElement *WorldPosition = doc->NewElement("WorldPosition");
-                    WorldPosition->SetAttribute("x", iter->action.synchronizeAction.targetPosition.worldPosition.x);
-                    WorldPosition->SetAttribute("y", iter->action.synchronizeAction.targetPosition.worldPosition.y);
-                    WorldPosition->SetAttribute("z", iter->action.synchronizeAction.targetPosition.worldPosition.z);
-                    WorldPosition->SetAttribute("h", iter->action.synchronizeAction.targetPosition.worldPosition.h);
+                    WorldPosition->SetAttribute("x", iter->action.synchronizeAction.targetPosition.worldPosition.x.c_str());
+                    WorldPosition->SetAttribute("y", iter->action.synchronizeAction.targetPosition.worldPosition.y.c_str());
+                    WorldPosition->SetAttribute("z", iter->action.synchronizeAction.targetPosition.worldPosition.z.c_str());
+                    WorldPosition->SetAttribute("h", iter->action.synchronizeAction.targetPosition.worldPosition.h.c_str());
                     TargetPosition->LinkEndChild(WorldPosition);
                 }
                 else if (iter->action.synchronizeAction.targetPosition.positiontype == LANE) {
                     tinyxml2::XMLElement *LanePosition = doc->NewElement("LanePosition");
-                    LanePosition->SetAttribute("roadId", iter->action.synchronizeAction.targetPosition.lanePosition.roadId);
-                    LanePosition->SetAttribute("laneId", iter->action.synchronizeAction.targetPosition.lanePosition.laneId);
-                    LanePosition->SetAttribute("offset", iter->action.synchronizeAction.targetPosition.lanePosition.offset);
-                    LanePosition->SetAttribute("s", iter->action.synchronizeAction.targetPosition.lanePosition.s);
+                    LanePosition->SetAttribute("roadId", iter->action.synchronizeAction.targetPosition.lanePosition.roadId.c_str());
+                    LanePosition->SetAttribute("laneId", iter->action.synchronizeAction.targetPosition.lanePosition.laneId.c_str());
+                    LanePosition->SetAttribute("offset", iter->action.synchronizeAction.targetPosition.lanePosition.offset.c_str());
+                    LanePosition->SetAttribute("s", iter->action.synchronizeAction.targetPosition.lanePosition.s.c_str());
                     TargetPosition->LinkEndChild(LanePosition);
                 }
                 // </WorldPosition>, </LanePosition>
@@ -1036,8 +1053,8 @@ SETRES XOSC::setStory(const Story *s)
 
                 // <RelativeSpeedToMaster>
                 tinyxml2::XMLElement *RelativeSpeedToMaster = doc->NewElement("RelativeSpeedToMaster");
-                RelativeSpeedToMaster->SetAttribute("value", iter->action.synchronizeAction.relativeSpeedToMasterValue);
-                RelativeSpeedToMaster->SetAttribute("speedTargetValueType", iter->action.synchronizeAction.speedTargetValueType);
+                RelativeSpeedToMaster->SetAttribute("value", iter->action.synchronizeAction.relativeSpeedToMasterValue.c_str());
+                RelativeSpeedToMaster->SetAttribute("speedTargetValueType", iter->action.synchronizeAction.speedTargetValueType.c_str());
                 FinalSpeed->LinkEndChild(RelativeSpeedToMaster);
                 // </RelativeSpeedToMaster>
 
@@ -1067,18 +1084,18 @@ SETRES XOSC::setStory(const Story *s)
                 // <WorldPosition>, <LanePosition>
                 if (iter->action.routingAction.position.positiontype == WORLD) {
                     tinyxml2::XMLElement *WorldPosition = doc->NewElement("WorldPosition");
-                    WorldPosition->SetAttribute("x", iter->action.routingAction.position.worldPosition.x);
-                    WorldPosition->SetAttribute("y", iter->action.routingAction.position.worldPosition.y);
-                    WorldPosition->SetAttribute("z", iter->action.routingAction.position.worldPosition.z);
-                    WorldPosition->SetAttribute("h", iter->action.routingAction.position.worldPosition.h);
+                    WorldPosition->SetAttribute("x", iter->action.routingAction.position.worldPosition.x.c_str());
+                    WorldPosition->SetAttribute("y", iter->action.routingAction.position.worldPosition.y.c_str());
+                    WorldPosition->SetAttribute("z", iter->action.routingAction.position.worldPosition.z.c_str());
+                    WorldPosition->SetAttribute("h", iter->action.routingAction.position.worldPosition.h.c_str());
                     Position->LinkEndChild(WorldPosition);
                 }
                 else if (iter->action.routingAction.position.positiontype == LANE) {
                     tinyxml2::XMLElement *LanePosition = doc->NewElement("LanePosition");
-                    LanePosition->SetAttribute("roadId", iter->action.routingAction.position.lanePosition.roadId);
-                    LanePosition->SetAttribute("laneId", iter->action.routingAction.position.lanePosition.laneId);
-                    LanePosition->SetAttribute("offset", iter->action.routingAction.position.lanePosition.offset);
-                    LanePosition->SetAttribute("s", iter->action.routingAction.position.lanePosition.s);
+                    LanePosition->SetAttribute("roadId", iter->action.routingAction.position.lanePosition.roadId.c_str());
+                    LanePosition->SetAttribute("laneId", iter->action.routingAction.position.lanePosition.laneId.c_str());
+                    LanePosition->SetAttribute("offset", iter->action.routingAction.position.lanePosition.offset.c_str());
+                    LanePosition->SetAttribute("s", iter->action.routingAction.position.lanePosition.s.c_str());
                     Position->LinkEndChild(LanePosition);
                 }
                 // </WorldPosition>, </LanePosition>
@@ -1171,6 +1188,12 @@ SETRES XOSC::setStory(const Story *s)
     // </StopTrigger>
     Act->LinkEndChild(StopTrigger);
 
+    Story->LinkEndChild(Act);
+    // </Act>
+
+    Storyboard->LinkEndChild(Story);
+    // </Story>
+
     return SET_OK;
 }
 
@@ -1179,6 +1202,7 @@ bool XOSC::saveXOSC()
     if (tinyxml2::XML_SUCCESS != doc->SaveFile(savepath)) {
         return false;
     }
+    saveflag = true;
     return true;
 }
 

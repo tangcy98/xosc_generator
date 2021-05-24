@@ -11,16 +11,25 @@ struct StopTrigger {
     bool criteria_KeepLaneTest;
     bool criteria_CollisionTest;
     bool criteria_DrivenDistanceTest;
-    const char *DrivenDistance;
-    StopTrigger() {
-        criteria_RunningStopTest = true;
-        criteria_RunningRedLightTest = true;
-        criteria_WrongLaneTest = true;
-        criteria_OnSidewalkTest = true;
-        criteria_KeepLaneTest = true;
-        criteria_CollisionTest = true;
-        criteria_DrivenDistanceTest = true;
-        DrivenDistance = "100";
+    std::string DrivenDistance;
+    StopTrigger(
+      bool icriteria_RunningStopTest = true,
+      bool icriteria_RunningRedLightTest = true,
+      bool icriteria_WrongLaneTest = true,
+      bool icriteria_OnSidewalkTest = true,
+      bool icriteria_KeepLaneTest = true,
+      bool icriteria_CollisionTest = true,
+      bool icriteria_DrivenDistanceTest = true,
+      std::string iDrivenDistance = "100"
+    ) {
+        criteria_RunningStopTest = icriteria_RunningStopTest;
+        criteria_RunningRedLightTest = icriteria_RunningRedLightTest;
+        criteria_WrongLaneTest = icriteria_WrongLaneTest;
+        criteria_OnSidewalkTest = icriteria_OnSidewalkTest;
+        criteria_KeepLaneTest = icriteria_KeepLaneTest;
+        criteria_CollisionTest = icriteria_CollisionTest;
+        criteria_DrivenDistanceTest = icriteria_DrivenDistanceTest;
+        DrivenDistance = iDrivenDistance;
     };
 };
 
