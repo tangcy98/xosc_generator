@@ -15,13 +15,32 @@ QT_END_NAMESPACE
 
 // static QComboBox* BooleanQComboBox(bool defaultopt = true);
 
+#define MINACTORNUM 0
+#define MAXACTORNUM 8
+#define MINPARANUM 0
+#define MAXPARANUM 6
+#define MINPROPNUM 0
+#define MAXPROPNUM 6
+
+class XOSCGroupBox : public QGroupBox
+{
+    Q_OBJECT
+public:
+    XOSCGroupBox(QString str, QWidget *parent = nullptr);
+protected:
+    void registerField(QString str, QWidget *widget,const char *property = nullptr);
+    
+protected:
+    QString fieldprefix;
+};
 
 class LicenseWizard : public QWizard
 {
     Q_OBJECT
 public:
     enum { Page_Intro, Page_Filename, Page_Map, Page_Environment,
-           Page_Actor, Page_Story, Page_StopTrigger };
+           Page_Actor, Page_Story, Page_Event, Page_StoryCondition,
+           Page_StopTrigger };
 
     LicenseWizard(QWidget *parent = nullptr);
     void accept() override;
@@ -70,16 +89,12 @@ private:
     QComboBox *nameComboBox;
 };
 
-class EnvironmentPage : public QWizardPage
+class EnvironmentGroupBox : public XOSCGroupBox
 {
     Q_OBJECT
 public:
-    EnvironmentPage(QWidget *parent = nullptr);
-
-    int nextId() const override;
-
+    EnvironmentGroupBox(QString str, QWidget *parent = nullptr);
 private:
-    QString fieldprefix;
     QLabel *nameLabel;
     QLabel *animationLabel;
     QLabel *dateTimeLabel;
@@ -105,23 +120,17 @@ private:
     QLineEdit *frictionScaleFactorLineEdit;
 };
 
-#define MINACTORNUM 0
-#define MAXACTORNUM 10
-#define MINPARANUM 0
-#define MAXPARANUM 10
-#define MINPROPNUM 0
-#define MAXPROPNUM 10
-
-class XOSCGroupBox : public QGroupBox
+class EnvironmentPage : public QWizardPage
 {
     Q_OBJECT
 public:
-    XOSCGroupBox(QString str, QWidget *parent = nullptr);
-protected:
-    void registerField(QString str, QWidget *widget,const char *property = nullptr);
-    
-protected:
+    EnvironmentPage(QWidget *parent = nullptr);
+
+    int nextId() const override;
+
+private:
     QString fieldprefix;
+    EnvironmentGroupBox *environmentGroupBox;
 };
 
 class WorldPositionGroupBox : public XOSCGroupBox
@@ -339,15 +348,304 @@ private:
 
 };
 
+#define MINCONDITIONNUM 0
+#define MAXCONDITIONNUM 10
+class ParameterConditionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    ParameterConditionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    QLabel *parameterRefLabel;
+    QLabel *valueLabel;
+    QLabel *ruleLabel;
+
+    QLineEdit *parameterRefLineEdit;
+    QLineEdit *valueLineEdit;
+    QComboBox *ruleComboBox;
+};
+class SimulationTimeConditionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    SimulationTimeConditionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    QLabel *valueLabel;
+    QLabel *ruleLabel;
+
+    QLineEdit *valueLineEdit;
+    QComboBox *ruleComboBox;
+};
+class StoryboardElementStateConditionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    StoryboardElementStateConditionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    QLabel *storyboardElementTypeLabel;
+    QLabel *storyboardElementRefLabel;
+    QLabel *stateLabel;
+
+    QComboBox *storyboardElementTypeComboBox;
+    QComboBox *storyboardElementRefComboBox;
+    QComboBox *stateComboBox;
+};
+class StandStillConditionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    StandStillConditionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    QLabel *durationLabel;
+    QLineEdit *durationLineEdit;
+};
+class TraveledDistanceConditionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    TraveledDistanceConditionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    QLabel *valueLabel;
+    QLineEdit *valueLineEdit;
+};
+class ReachPositionConditionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    ReachPositionConditionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    QLabel *toleranceLabel;
+    QLineEdit *toleranceLineEdit;
+    PositionGroupBox *positionGroupBox;
+};
+class RelativeDistanceConditionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    RelativeDistanceConditionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    QLabel *entityRefLabel;
+    QLabel *relativeDistanceTypeLabel;
+    QLabel *valueLabel;
+    QLabel *freespaceLabel;
+    QLabel *ruleLabel;
+
+    QLineEdit *entityRefLineEdit;
+    QLineEdit *relativeDistanceTypeLineEdit;
+    QLineEdit *valueLineEdit;
+    QLineEdit *freespaceLineEdit;
+    QLineEdit *ruleLineEdit;
+};
+
+class ConditionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    ConditionGroupBox(QString str, QWidget *parent = nullptr);
+private slots:
+    void updateConditionType();
+private:
+    QLabel *nameLabel;
+    QLabel *delayLabel;
+    QLabel *conditionEdgeLabel;
+    QLabel *triggeringEntityRefLabel;
+    QLabel *typeLabel;
+
+    QLineEdit *nameLineEdit;
+    QLineEdit *delayLineEdit;
+    QComboBox *conditionEdgeComboBox;
+    QComboBox *triggeringEntityRefComboBox;
+    QComboBox *typeComboBox;
+
+    ParameterConditionGroupBox *parameterConditionGroupBox;
+    SimulationTimeConditionGroupBox *simulationTimeConditionGroupBox;
+    StoryboardElementStateConditionGroupBox *storyboardElementStateConditionGroupBox;
+    StandStillConditionGroupBox *standStillConditionGroupBox;
+    TraveledDistanceConditionGroupBox *traveledDistanceConditionGroupBox;
+    ReachPositionConditionGroupBox *reachPositionConditionGroupBox;
+    RelativeDistanceConditionGroupBox *relativeDistanceConditionGroupBox;
+};
+
+class StoryPage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    StoryPage(QWidget *parent = nullptr);
+    int nextId() const override;
+
+private:
+    QString fieldprefix;
+    QLabel *storyNameLabel;
+    QLabel *actNameLabel;
+    QLabel *maneuverGroupNameLabel;
+    QLabel *maximumExecutionCountLabel;
+    QLabel *selectTriggeringEntitiesLabel;
+    QLabel *entityRefLabel;
+    QLabel *maneuverNameLabel;
+
+
+    QLineEdit *storyNameLineEdit;
+    QLineEdit *actNameLineEdit;
+    QLineEdit *maneuverGroupNameLineEdit;
+    QLineEdit *maximumExecutionCountLineEdit;
+    QComboBox *selectTriggeringEntitiesComboBox;
+    QComboBox *entityRefComboBox;
+    QLineEdit *maneuverNameLineEdit;
+};
+
+class EnvironmentActionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    EnvironmentActionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    EnvironmentGroupBox *environmentGroupBox;
+};
+class LongitudinalActionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    LongitudinalActionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    QLabel *dynamicsShapeLabel;
+    QLabel *dynamicsvalueLabel;
+    QLabel *dynamicsDimensionLabel;
+    QLabel *targetvalueLabel;
+
+    QComboBox *dynamicsShapeComboBox;
+    QLineEdit *dynamicsvalueLineEdit;
+    QComboBox *dynamicsDimensionComboBox;
+    QLineEdit *targetvalueLineEdit;
+};
+class LateralActionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    LateralActionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    QLabel *dynamicsShapeLabel;
+    QLabel *dynamicsvalueLabel;
+    QLabel *dynamicsDimensionLabel;
+    QLabel *targetentityRefLabel;
+    QLabel *targetvalueLabel;
+
+    QComboBox *dynamicsShapeComboBox;
+    QLineEdit *dynamicsvalueLineEdit;
+    QComboBox *dynamicsDimensionComboBox;
+    QComboBox *targetentityRefComboBox;
+    QLineEdit *targetvalueLineEdit;
+};
+
+class SynchronizeActionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    SynchronizeActionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    QLabel *masterEntityRefLabel;
+    QLabel *relativeSpeedToMasterValueLabel;
+    QLabel *speedTargetValueTypeLabel;
+
+    QComboBox *masterEntityRefComboBox;
+    QLineEdit *relativeSpeedToMasterValueLineEdit;
+    QComboBox *speedTargetValueTypeComboBox;
+
+
+    PositionGroupBox *targetPositionMasterGroupBox;
+    PositionGroupBox *targetPositionGroupBox;
+};
+class RoutingActionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    RoutingActionGroupBox(QString str, QWidget *parent = nullptr);
+private:
+    PositionGroupBox *positionGroupBox;
+};
+
+class ActionGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    ActionGroupBox(QString str, QWidget *parent = nullptr);
+private slots:
+    void updateActionType();
+private:
+    QLabel *nameLabel;
+    QLabel *typeLabel;
+
+    QLineEdit *nameLineEdit;
+    QComboBox *typeComboBox;
+    EnvironmentActionGroupBox *environmentActionGroupBox;
+    LongitudinalActionGroupBox *longitudinalActionGroupBox;
+    LateralActionGroupBox *lateralActionGroupBox;
+    SynchronizeActionGroupBox *synchronizeActionGroupBox;
+    RoutingActionGroupBox *routingActionGroupBox;
+};
+
+class EventGroupBox : public XOSCGroupBox
+{
+    Q_OBJECT
+public:
+    EventGroupBox(QString str, QWidget *parent = nullptr);
+private slots:
+    void updateConditions();
+private:
+    QLabel *nameLabel;
+    QLabel *priorityLabel;
+    QLabel *conditionNumLabel;
+
+    QLineEdit *nameLineEdit;
+    QComboBox *priorityComboBox;
+    QComboBox *conditionNumComboBox;
+    ActionGroupBox *actionGroupBox;
+    QVector<ConditionGroupBox*> startConditionGroupBox;
+};
+
+#define MAXEVENTNUM 8
+#define MINEVENTNUM 0
+class EventPage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    EventPage(QWidget *parent = nullptr);
+    int nextId() const override;
+private slots:
+    void updateEvent();
+private:
+    QString fieldprefix;
+    QLabel *eventNumLabel;
+    QComboBox *eventNumComboBox;
+
+    QVector< EventGroupBox* > eventGroupBox;
+};
+
+class StoryConditionPage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    StoryConditionPage(QWidget *parent = nullptr);
+    int nextId() const override;
+private slots:
+    void updateConditions();
+private:
+    QString fieldprefix;
+    QLabel *startConditionNumLabel;
+    QLabel *stopConditionNumLabel;
+
+    QComboBox *startConditionNumComboBox;
+    QComboBox *stopConditionNumComboBox;
+
+    QVector<ConditionGroupBox*> startConditionGroupBox;
+    QVector<ConditionGroupBox*> stopConditionGroupBox;
+};
 
 class StopTriggerPage : public QWizardPage
 {
     Q_OBJECT
 public:
     StopTriggerPage(QWidget *parent = nullptr);
-
     int nextId() const override;
-private slots:
 
 private:
     QString fieldprefix;

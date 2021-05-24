@@ -70,9 +70,9 @@ static const char * category[] = {
     "bicycle",
 };
 
-static QComboBox* BooleanQComboBox(bool defaultopt = true)
+static QComboBox* BooleanQComboBox(bool defaultopt = true, QWidget *parent = nullptr)
 {
-    QComboBox *box = new QComboBox;
+    QComboBox *box = new QComboBox(parent);
     if (defaultopt) {
         box->addItem("true");
         box->addItem("false");
@@ -84,15 +84,37 @@ static QComboBox* BooleanQComboBox(bool defaultopt = true)
     return box;
 }
 
-static QComboBox* NumberQComboBox(int bottom, int top)
+static QComboBox* NumberQComboBox(int bottom, int top, QWidget *parent = nullptr)
 {
-    QComboBox *box = new QComboBox;
+    QComboBox *box = new QComboBox(parent);
     if (bottom >= top) return box;
     for (int i = bottom; i < top; ++i) {
         box->addItem(QString::number(i));
         box->setItemData(i, QVariant(i));
     }
     return box;
+}
+
+static QComboBox* RuleComboBox(int defaultopt = -1, QWidget *parent = nullptr)
+{
+    QComboBox *ruleComboBox = new QComboBox(parent);
+    
+    if (defaultopt < 0) {
+        ruleComboBox->addItem("lessThan");
+        ruleComboBox->addItem("greaterThan");
+        ruleComboBox->addItem("equalTo");
+    }
+    else if (defaultopt > 0) {
+        ruleComboBox->addItem("greaterThan");
+        ruleComboBox->addItem("lessThan");
+        ruleComboBox->addItem("equalTo");
+    }
+    else {
+        ruleComboBox->addItem("equalTo");
+        ruleComboBox->addItem("greaterThan");
+        ruleComboBox->addItem("lessThan");
+    }
+    return ruleComboBox;
 }
 
 LicenseWizard::LicenseWizard(QWidget *parent)
@@ -109,6 +131,9 @@ LicenseWizard::LicenseWizard(QWidget *parent)
     setPage(Page_Map, new MapPage);
     setPage(Page_Environment, new EnvironmentPage);
     setPage(Page_Actor, new ActorPage);
+    setPage(Page_Story, new StoryPage);
+    setPage(Page_Event, new EventPage);
+    setPage(Page_StoryCondition, new StoryConditionPage);
     setPage(Page_StopTrigger, new StopTriggerPage);
 
     setStartId(Page_Intro);
@@ -294,6 +319,21 @@ void LicenseWizard::accept()
     // end - Actor
 
     // begin - Story
+    Story story;
+
+    story.storyName = field("Story.storyName").toString().toStdString();
+    story.actName = field("Story.actName").toString().toStdString();
+    story.maneuverGroupName = field("Story.maneuverGroupName").toString().toStdString();
+    story.maximumExecutionCount = field("Story.maximumExecutionCount").toString().toStdString();
+    story.selectTriggeringEntities = field("Story.selectTriggeringEntities").toString().toStdString();
+    story.entityRef = field("Actor."+field("Story.entityRef").toString()+".name").toString().toStdString();
+    story.maneuverName = field("Story.maneuverName").toString().toStdString();
+    
+    Event event;
+
+    
+
+    Condition condition;
 
     // end - Story
 
@@ -419,26 +459,18 @@ int MapPage::nextId() const
     return LicenseWizard::Page_Environment;
 }
 
-EnvironmentPage::EnvironmentPage(QWidget *parent)
-    : QWizardPage(parent)
+EnvironmentGroupBox::EnvironmentGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
-    setTitle(tr("Fill In Your Environment"));
-    setSubTitle(tr("Please fill all the fields. Make sure to provide a valid "
-                   "input and recommended values are already given."));
-
     nameLabel = new QLabel(tr("name:"));
     nameLineEdit = new QLineEdit;
     nameLineEdit->setText("Environment1");
-    nameLabel->setBuddy(nameLineEdit);
 
     animationLabel = new QLabel(tr("animation:"));
     animationComboBox = BooleanQComboBox(false);
-    animationLabel->setBuddy(animationComboBox);
 
     dateTimeLabel = new QLabel(tr("dateTime:"));
     dateTimeLineEdit = new QLineEdit;
     dateTimeLineEdit->setText("2019-06-25T12:00:00");
-    dateTimeLabel->setBuddy(dateTimeLineEdit);
 
     cloudStateLabel = new QLabel(tr("cloudState:"));
     cloudStateComboBox = new QComboBox;
@@ -447,50 +479,42 @@ EnvironmentPage::EnvironmentPage(QWidget *parent)
     cloudStateComboBox->addItem("cloudy");
     cloudStateComboBox->addItem("overcast");
     cloudStateComboBox->addItem("rainy");
-    cloudStateLabel->setBuddy(cloudStateComboBox);
 
     sunintensityLabel = new QLabel(tr("sunintensity[0,inf):"));
     sunintensityLineEdit = new QLineEdit;
     sunintensityLineEdit->setText("0.35");
     sunintensityLineEdit->setValidator(new QDoubleValidator(this));
-    sunintensityLabel->setBuddy(sunintensityLineEdit);
 
     azimuthLabel = new QLabel(tr("azimuth[0,2PI]:"));
     azimuthLineEdit = new QLineEdit;
     azimuthLineEdit->setText("0");
     azimuthLineEdit->setValidator(new QDoubleValidator(this));
-    azimuthLabel->setBuddy(azimuthLineEdit);
 
     elevationLabel = new QLabel(tr("elevation:[-PI,PI]"));
     elevationLineEdit = new QLineEdit;
     elevationLineEdit->setText("1.31");
     elevationLineEdit->setValidator(new QDoubleValidator(this));
-    elevationLabel->setBuddy(elevationLineEdit);
 
     visualRangeLabel = new QLabel(tr("visualRange[0,inf):"));
     visualRangeLineEdit = new QLineEdit;
     visualRangeLineEdit->setText("100000.0");
     visualRangeLineEdit->setValidator(new QDoubleValidator(this));
-    visualRangeLabel->setBuddy(visualRangeLineEdit);
 
     precipitationTypeLabel = new QLabel(tr("precipitationType:"));
     precipitationTypeComboBox = new QComboBox;
     precipitationTypeComboBox->addItem("dry");
     precipitationTypeComboBox->addItem("rain");
     precipitationTypeComboBox->addItem("snow");
-    precipitationTypeLabel->setBuddy(precipitationTypeComboBox);
 
     precipitationintensityLabel = new QLabel(tr("precipitationintensity[0,1]:"));
     precipitationintensityLineEdit = new QLineEdit;
     precipitationintensityLineEdit->setText("0.1");
     precipitationintensityLineEdit->setValidator(new QDoubleValidator(this));
-    precipitationintensityLabel->setBuddy(precipitationintensityLineEdit);
 
     frictionScaleFactorLabel = new QLabel(tr("frictionScaleFactor[0,inf):"));
     frictionScaleFactorLineEdit = new QLineEdit;
     frictionScaleFactorLineEdit->setText("1.0");
     frictionScaleFactorLineEdit->setValidator(new QDoubleValidator(this));
-    frictionScaleFactorLabel->setBuddy(frictionScaleFactorLineEdit);
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(nameLabel, 0, 0);
@@ -517,7 +541,6 @@ EnvironmentPage::EnvironmentPage(QWidget *parent)
     layout->addWidget(precipitationintensityLineEdit, 9, 1);
     layout->addWidget(frictionScaleFactorLineEdit, 10, 1);
 
-    fieldprefix = "Environment.";
     registerField(fieldprefix + "name", nameLineEdit);
     registerField(fieldprefix + "animation", animationComboBox, "currentText");
     registerField(fieldprefix + "dateTime", dateTimeLineEdit);
@@ -529,6 +552,17 @@ EnvironmentPage::EnvironmentPage(QWidget *parent)
     registerField(fieldprefix + "precipitationType", precipitationTypeComboBox, "currentText");
     registerField(fieldprefix + "precipitationintensity", precipitationintensityLineEdit);
     registerField(fieldprefix + "frictionScaleFactor", frictionScaleFactorLineEdit);
+
+    setLayout(layout);
+}
+EnvironmentPage::EnvironmentPage(QWidget *parent)
+    : QWizardPage(parent)
+{
+    setTitle(tr("Fill In Your Environment"));
+    setSubTitle(tr("Please fill all the fields. Make sure to provide a valid "
+                   "input and recommended values are already given."));
+    fieldprefix = "Environment.";
+    environmentGroupBox = new EnvironmentGroupBox(fieldprefix, this);
     QVector<QString>::iterator itername;
     QVector<QWidget*>::iterator iterwidget;
     QVector<const char*>::iterator iterproperty;
@@ -541,6 +575,8 @@ EnvironmentPage::EnvironmentPage(QWidget *parent)
     childfieldname.clear();
     childfieldwidget.clear();
     childfieldproperty.clear();
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(environmentGroupBox, 0, 0);
     setLayout(layout);
 }
 
@@ -623,8 +659,8 @@ PositionGroupBox::PositionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(
     typeComboBox = new QComboBox;
     typeComboBox->addItem("WorldPosition");
     typeComboBox->addItem("LanePosition");
-    worldPositionGroupBox = new WorldPositionGroupBox(fieldprefix + "WorldPostion.");
-    lanePositionGroupBox = new LanePositionGroupBox(fieldprefix + "LanePosition.");
+    worldPositionGroupBox = new WorldPositionGroupBox(fieldprefix + "WorldPostion.", this);
+    lanePositionGroupBox = new LanePositionGroupBox(fieldprefix + "LanePosition.", this);
 
     registerField(fieldprefix + "type", typeComboBox, "currentText");
 
@@ -719,7 +755,7 @@ void PropertiesGroupBox::updateProperties()
 VehicleGroupBox::VehicleGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
 {
     setTitle("Vehicle Parameters");
-    controllerPropertiesGroupBox = new PropertiesGroupBox(fieldprefix + "ControllerProperties.");
+    controllerPropertiesGroupBox = new PropertiesGroupBox(fieldprefix + "ControllerProperties.", this);
 
     controllerPropertiesGroupBox->setTitle("Controller Properties");
 
@@ -901,11 +937,11 @@ ActorGroupBox::ActorGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,pa
 
     nameLabel = new QLabel(tr("name"));
     nameComboBox = new QComboBox;
-    positionGroupBox = new PositionGroupBox(fieldprefix + "Position.");
-    propertiesGroupBox = new PropertiesGroupBox(fieldprefix + "Properties.");
-    vehiclegroupbox = new VehicleGroupBox(fieldprefix + "Vehicle.");
-    pedestriangroupbox = new PedestrianGroupBox(fieldprefix + "Pedestrian.");
-    miscObjectgroupbox = new MiscObjectGroupBox(fieldprefix + "MiscObject.");
+    positionGroupBox = new PositionGroupBox(fieldprefix + "Position.", this);
+    propertiesGroupBox = new PropertiesGroupBox(fieldprefix + "Properties.", this);
+    vehiclegroupbox = new VehicleGroupBox(fieldprefix + "Vehicle.", this);
+    pedestriangroupbox = new PedestrianGroupBox(fieldprefix + "Pedestrian.", this);
+    miscObjectgroupbox = new MiscObjectGroupBox(fieldprefix + "MiscObject.", this);
     propertiesGroupBox->setTitle("Properties");
     if (typeComboBox->currentText() == "Vehicle") {
         nameComboBox->clear();
@@ -1080,7 +1116,7 @@ ActorPage::ActorPage(QWidget *parent)
     layout->addWidget(actornumLabel, 0, 0);
     layout->addWidget(actornumComboBox, 0, 1);
     for (int i = 0; i < MAXACTORNUM; ++i) {
-        ActorGroupBox* box = new ActorGroupBox(fieldprefix + "Actor" + QString::number(i) + ".");
+        ActorGroupBox* box = new ActorGroupBox(fieldprefix + "Actor" + QString::number(i) + ".", this);
         actorGroupBox.append(box);
         box->setTitle("~Actor" + QString::number(i) + " Settings");
 
@@ -1127,14 +1163,886 @@ void ActorPage::updateActorPage()
 
 int ActorPage::nextId() const
 {
+    return LicenseWizard::Page_Story;
+}
+
+ParameterConditionGroupBox::ParameterConditionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("ParameterCondition");
+    parameterRefLabel = new QLabel("parameterRef:");
+    valueLabel = new QLabel("value:");
+    ruleLabel = new QLabel("rule:");
+
+    parameterRefLineEdit = new QLineEdit;
+    valueLineEdit = new QLineEdit;
+    ruleComboBox = RuleComboBox();
+
+    registerField(fieldprefix + "parameterRef", parameterRefLineEdit);
+    registerField(fieldprefix + "value", valueLineEdit);
+    registerField(fieldprefix + "rule", ruleComboBox, "currentText");
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(parameterRefLabel, 0, 0);
+    layout->addWidget(valueLabel, 1, 0);
+    layout->addWidget(ruleLabel, 2, 0);
+
+    layout->addWidget(parameterRefLineEdit, 0, 1);
+    layout->addWidget(valueLineEdit, 1, 1);
+    layout->addWidget(ruleComboBox, 2, 1);
+    setLayout(layout);
+}
+SimulationTimeConditionGroupBox::SimulationTimeConditionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("SimulationTimeCondition");
+    valueLabel = new QLabel("value:");
+    ruleLabel = new QLabel("rule:");
+
+    valueLineEdit = new QLineEdit;
+    ruleComboBox = RuleComboBox();
+
+    registerField(fieldprefix + "value", valueLineEdit);
+    registerField(fieldprefix + "rule", ruleComboBox, "currentText");
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(valueLabel, 0, 0);
+    layout->addWidget(ruleLabel, 1, 0);
+
+    layout->addWidget(valueLineEdit, 0, 1);
+    layout->addWidget(ruleComboBox, 1, 1);
+    setLayout(layout);
+}
+StoryboardElementStateConditionGroupBox::StoryboardElementStateConditionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("StoryboardElementStateCondition");
+    storyboardElementTypeComboBox = new QComboBox;
+    storyboardElementRefComboBox = new QComboBox;
+    stateComboBox = new QComboBox;
+
+    storyboardElementTypeComboBox->addItem("story");
+    storyboardElementTypeComboBox->addItem("act");
+    storyboardElementTypeComboBox->addItem("maneuver");
+    storyboardElementTypeComboBox->addItem("event");
+    storyboardElementTypeComboBox->addItem("action");
+    storyboardElementTypeComboBox->addItem("maneuverGroup");
+    stateComboBox->addItem("completeState");
+    stateComboBox->addItem("startTransition");
+    stateComboBox->addItem("endTransition");
+    stateComboBox->addItem("stopTransition");
+    stateComboBox->addItem("skipTransition");
+    stateComboBox->addItem("runningState");
+    stateComboBox->addItem("standbyState");
+
+    // TODO: storyboardElementRefComboBox
+
+
+}
+StandStillConditionGroupBox::StandStillConditionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("StandStillCondition");
+    durationLabel = new QLabel("duration:");
+    durationLineEdit = new QLineEdit("0.1");
+
+    registerField(fieldprefix+"duration", durationLineEdit);
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(durationLabel, 0, 0);
+    layout->addWidget(durationLineEdit, 0, 1);
+    setLayout(layout);
+}
+TraveledDistanceConditionGroupBox::TraveledDistanceConditionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("TraveledDistanceCondition");
+    valueLabel = new QLabel("value:");
+    valueLineEdit = new QLineEdit;
+
+    registerField(fieldprefix+"value", valueLineEdit);
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(valueLabel, 0, 0);
+    layout->addWidget(valueLineEdit, 0, 1);
+    setLayout(layout);
+}
+ReachPositionConditionGroupBox::ReachPositionConditionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("ReachPositionCondition");
+    toleranceLabel = new QLabel("tolerance:");
+    toleranceLineEdit = new QLineEdit;
+    positionGroupBox = new PositionGroupBox(fieldprefix+"Position.", this);
+
+    registerField(fieldprefix+"tolerance", toleranceLineEdit);
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(toleranceLabel, 0, 0);
+    layout->addWidget(toleranceLineEdit, 0, 1);
+    layout->addWidget(positionGroupBox, 1, 0, 1, 2);
+    setLayout(layout);
+}
+RelativeDistanceConditionGroupBox::RelativeDistanceConditionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("RelativeDistanceCondition");
+    entityRefLabel = new QLabel("entityRef:");
+    relativeDistanceTypeLabel = new QLabel("relativeDistanceType:");
+    valueLabel = new QLabel("value:");
+    freespaceLabel = new QLabel("freespace:");
+    ruleLabel = new QLabel("rule:");
+    // TODO: ref
+
+    QGridLayout *layout = new QGridLayout;
+    setLayout(layout);
+}
+
+ConditionGroupBox::ConditionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    nameLabel = new QLabel("name:");
+    delayLabel = new QLabel("delay[0,inf):");
+    conditionEdgeLabel = new QLabel("conditionEdge:");
+    triggeringEntityRefLabel = new QLabel("triggeringEntityRef:");
+    typeLabel = new QLabel("type:");
+    nameLineEdit = new QLineEdit;
+    delayLineEdit = new QLineEdit("0");
+    conditionEdgeComboBox = new QComboBox;
+    conditionEdgeComboBox->addItem("rising");
+    conditionEdgeComboBox->addItem("falling");
+    conditionEdgeComboBox->addItem("risingOrFalling");
+    conditionEdgeComboBox->addItem("none");
+    triggeringEntityRefComboBox = new QComboBox;
+    for (int i = 0; i < MAXACTORNUM; ++i) {
+        triggeringEntityRefComboBox->addItem("Actor"+QString::number(i));
+    }
+    typeComboBox = new QComboBox;
+    typeComboBox->addItem("ParameterCondition");
+    typeComboBox->addItem("SimulationTimeCondition");
+    typeComboBox->addItem("StoryboardElementStateCondition");
+    typeComboBox->addItem("StandStillCondition");
+    typeComboBox->addItem("TraveledDistanceCondition");
+    typeComboBox->addItem("ReachPositionCondition");
+    typeComboBox->addItem("RelativeDistanceCondition");
+
+    parameterConditionGroupBox = new ParameterConditionGroupBox(fieldprefix+"ParameterCondition.", this);
+    simulationTimeConditionGroupBox = new SimulationTimeConditionGroupBox(fieldprefix+"SimulationTimeCondition.", this);
+    storyboardElementStateConditionGroupBox = new StoryboardElementStateConditionGroupBox(fieldprefix+"StoryboardElementStateCondition.", this);
+    standStillConditionGroupBox = new StandStillConditionGroupBox(fieldprefix+"StandStillCondition.", this);
+    traveledDistanceConditionGroupBox = new TraveledDistanceConditionGroupBox(fieldprefix+"TraveledDistanceCondition.", this);
+    reachPositionConditionGroupBox = new ReachPositionConditionGroupBox(fieldprefix+"ReachPositionCondition.", this);
+    relativeDistanceConditionGroupBox = new RelativeDistanceConditionGroupBox(fieldprefix+"RelativeDistanceCondition.", this);
+
+    QString type = typeComboBox->currentText();
+    if (type == "ParameterCondition") {
+        parameterConditionGroupBox->setVisible(true);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "SimulationTimeCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(true);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "StoryboardElementStateCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(true);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "StandStillCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(true);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "TraveledDistanceCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(true);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "ReachPositionCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(true);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "RelativeDistanceCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(true);
+    }
+
+    connect(typeComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateConditionType()));
+
+    registerField(fieldprefix+"name", nameLineEdit);
+    registerField(fieldprefix+"delay", delayLineEdit);
+    registerField(fieldprefix+"conditionEdge", conditionEdgeComboBox, "currentText");
+    registerField(fieldprefix+"triggeringEntityRef", triggeringEntityRefComboBox, "currentText");
+    registerField(fieldprefix+"type", typeComboBox, "currentText");
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(nameLabel, 0, 0);
+    layout->addWidget(delayLabel, 1, 0);
+    layout->addWidget(conditionEdgeLabel, 2, 0);
+    layout->addWidget(triggeringEntityRefLabel, 3, 0);
+    layout->addWidget(typeLabel, 4, 0);
+
+    layout->addWidget(nameLineEdit, 0, 1);
+    layout->addWidget(delayLineEdit, 1, 1);
+    layout->addWidget(conditionEdgeComboBox, 2, 1);
+    layout->addWidget(triggeringEntityRefComboBox, 3, 1);
+    layout->addWidget(typeComboBox, 4, 1);
+
+    layout->addWidget(parameterConditionGroupBox, 5, 0, 1, 2);
+    layout->addWidget(simulationTimeConditionGroupBox, 6, 0, 1, 2);
+    layout->addWidget(storyboardElementStateConditionGroupBox, 7, 0, 1, 2);
+    layout->addWidget(standStillConditionGroupBox, 8, 0, 1, 2);
+    layout->addWidget(traveledDistanceConditionGroupBox, 9, 0, 1, 2);
+    layout->addWidget(reachPositionConditionGroupBox, 10, 0, 1, 2);
+    layout->addWidget(relativeDistanceConditionGroupBox, 11, 0, 1, 2);
+
+    setLayout(layout);
+}
+
+void ConditionGroupBox::updateConditionType()
+{
+    QString type = typeComboBox->currentText();
+    if (type == "ParameterCondition") {
+        parameterConditionGroupBox->setVisible(true);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "SimulationTimeCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(true);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "StoryboardElementStateCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(true);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "StandStillCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(true);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "TraveledDistanceCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(true);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "ReachPositionCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(true);
+        relativeDistanceConditionGroupBox->setVisible(false);
+    }
+    else if (type == "RelativeDistanceCondition") {
+        parameterConditionGroupBox->setVisible(false);
+        simulationTimeConditionGroupBox->setVisible(false);
+        storyboardElementStateConditionGroupBox->setVisible(false);
+        standStillConditionGroupBox->setVisible(false);
+        traveledDistanceConditionGroupBox->setVisible(false);
+        reachPositionConditionGroupBox->setVisible(false);
+        relativeDistanceConditionGroupBox->setVisible(true);
+    }
+}
+
+StoryPage::StoryPage(QWidget *parent)
+    : QWizardPage(parent)
+{
+    setTitle("Story Parameters");
+    setSubTitle("Set the basic information of <i>OpenScenario</i>&trade; Story.");
+    fieldprefix = "Story.";
+    storyNameLabel = new QLabel("storyName:");
+    actNameLabel = new QLabel("actName:");
+    maneuverGroupNameLabel = new QLabel("maneuverGroupName:");
+    maximumExecutionCountLabel = new QLabel("maximumExecutionCount[1,inf):");
+    selectTriggeringEntitiesLabel = new QLabel("selectTriggeringEntities:");
+    entityRefLabel = new QLabel("entityRef:");
+    maneuverNameLabel = new QLabel("maneuverName:");
+
+    storyNameLineEdit = new QLineEdit("MyStory");
+    actNameLineEdit = new QLineEdit("Behavior");
+    maneuverGroupNameLineEdit = new QLineEdit("ManeuverSequence");
+    maximumExecutionCountLineEdit = new QLineEdit("1");
+    selectTriggeringEntitiesComboBox = BooleanQComboBox(false);
+    entityRefComboBox = new QComboBox;
+    for (int i = 0; i < MAXACTORNUM; ++i) {
+        entityRefComboBox->addItem("Actor"+QString::number(i));
+    }
+    maneuverNameLineEdit = new QLineEdit;
+
+    maneuverNameLineEdit->setPlaceholderText("A name describes the maneuver.");
+
+    registerField(fieldprefix+"storyName", storyNameLineEdit);
+    registerField(fieldprefix+"actName", actNameLineEdit);
+    registerField(fieldprefix+"maneuverGroupName", maneuverGroupNameLineEdit);
+    registerField(fieldprefix+"maximumExecutionCount", maximumExecutionCountLineEdit);
+    registerField(fieldprefix+"selectTriggeringEntities", selectTriggeringEntitiesComboBox, "currentText");
+    registerField(fieldprefix+"entityRef", entityRefComboBox, "currentText");
+    registerField(fieldprefix+"maneuverName", maneuverNameLineEdit);
+    QVector<QString>::iterator itername;
+    QVector<QWidget*>::iterator iterwidget;
+    QVector<const char*>::iterator iterproperty;
+    for (itername = childfieldname.begin(), iterwidget = childfieldwidget.begin(), iterproperty = childfieldproperty.begin();
+      itername != childfieldname.end() && iterwidget!= childfieldwidget.end() && iterproperty != childfieldproperty.end();
+      ++itername, ++iterwidget, ++iterproperty
+    ) {
+        registerField(*itername, *iterwidget, *iterproperty);
+    }
+    childfieldname.clear();
+    childfieldwidget.clear();
+    childfieldproperty.clear();
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(storyNameLabel, 0, 0);
+    layout->addWidget(actNameLabel, 1, 0);
+    layout->addWidget(maneuverGroupNameLabel, 2, 0);
+    layout->addWidget(maximumExecutionCountLabel, 3, 0);
+    layout->addWidget(selectTriggeringEntitiesLabel, 4, 0);
+    layout->addWidget(entityRefLabel, 5, 0);
+    layout->addWidget(maneuverNameLabel, 6, 0);
+
+    layout->addWidget(storyNameLineEdit, 0, 1);
+    layout->addWidget(actNameLineEdit, 1, 1);
+    layout->addWidget(maneuverGroupNameLineEdit, 2, 1);
+    layout->addWidget(maximumExecutionCountLineEdit, 3, 1);
+    layout->addWidget(selectTriggeringEntitiesComboBox, 4, 1);
+    layout->addWidget(entityRefComboBox, 5, 1);
+    layout->addWidget(maneuverNameLineEdit, 6, 1);
+
+    setLayout(layout);
+    
+}
+int StoryPage::nextId() const
+{
+    return LicenseWizard::Page_Event;
+}
+
+EnvironmentActionGroupBox::EnvironmentActionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("EnvironmentAction");
+    environmentGroupBox = new EnvironmentGroupBox(fieldprefix, this);
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(environmentGroupBox, 0, 0);
+    setLayout(layout);
+}
+LongitudinalActionGroupBox::LongitudinalActionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("LongitudinalAction");
+    dynamicsShapeLabel = new QLabel("dynamicsShape:");
+    dynamicsvalueLabel = new QLabel("dynamicsvalue[0.0,inf):");
+    dynamicsDimensionLabel = new QLabel("dynamicsDimension:");
+    targetvalueLabel = new QLabel("absoluteTargetSpeed(m/s):");
+
+    dynamicsShapeComboBox = new QComboBox;
+    dynamicsShapeComboBox->addItem("step");
+    dynamicsShapeComboBox->addItem("cubic");
+    dynamicsShapeComboBox->addItem("sinusoidal");
+    dynamicsShapeComboBox->addItem("linear");
+    dynamicsvalueLineEdit = new QLineEdit;
+    dynamicsDimensionComboBox = new QComboBox;
+    dynamicsDimensionComboBox->addItem("distance");
+    dynamicsDimensionComboBox->addItem("time");
+    dynamicsDimensionComboBox->addItem("rate");
+    targetvalueLineEdit = new QLineEdit("0.0");
+
+    registerField(fieldprefix+"dynamicsShape", dynamicsShapeComboBox, "currentText");
+    registerField(fieldprefix+"dynamicsvalue", dynamicsvalueLineEdit);
+    registerField(fieldprefix+"dynamicsDimension", dynamicsDimensionComboBox, "currentText");
+    registerField(fieldprefix+"targetvalue", targetvalueLineEdit);
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(dynamicsShapeLabel, 0, 0);
+    layout->addWidget(dynamicsvalueLabel, 1, 0);
+    layout->addWidget(dynamicsDimensionLabel, 2, 0);
+    layout->addWidget(targetvalueLabel, 3, 0);
+    layout->addWidget(dynamicsShapeComboBox, 0, 1);
+    layout->addWidget(dynamicsvalueLineEdit, 1, 1);
+    layout->addWidget(dynamicsDimensionComboBox, 2, 1);
+    layout->addWidget(targetvalueLineEdit, 3, 1);
+    setLayout(layout);
+}
+LateralActionGroupBox::LateralActionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("LateralAction");
+    dynamicsShapeLabel = new QLabel("dynamicsShape:");
+    dynamicsvalueLabel = new QLabel("dynamicsvalue[0.0,inf):");
+    dynamicsDimensionLabel = new QLabel("dynamicsDimension:");
+    targetentityRefLabel = new QLabel("entityRef:");
+    targetvalueLabel = new QLabel("absoluteTargetSpeed(m/s):");
+
+    dynamicsShapeComboBox = new QComboBox;
+    dynamicsShapeComboBox->addItem("step");
+    dynamicsShapeComboBox->addItem("cubic");
+    dynamicsShapeComboBox->addItem("sinusoidal");
+    dynamicsShapeComboBox->addItem("linear");
+    dynamicsvalueLineEdit = new QLineEdit;
+    dynamicsDimensionComboBox = new QComboBox;
+    dynamicsDimensionComboBox->addItem("distance");
+    dynamicsDimensionComboBox->addItem("time");
+    dynamicsDimensionComboBox->addItem("rate");
+    targetentityRefComboBox = new QComboBox;
+    for (int i = 0; i < MAXACTORNUM; ++i) {
+        targetentityRefComboBox->addItem("Actor"+QString::number(i));
+    }
+    targetvalueLineEdit = new QLineEdit("0.0");
+
+    registerField(fieldprefix+"dynamicsShape", dynamicsShapeComboBox, "currentText");
+    registerField(fieldprefix+"dynamicsvalue", dynamicsvalueLineEdit);
+    registerField(fieldprefix+"dynamicsDimension", dynamicsDimensionComboBox, "currentText");
+    registerField(fieldprefix+"targetentityRef", targetentityRefComboBox, "currentText");
+    registerField(fieldprefix+"targetvalue", targetvalueLineEdit);
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(dynamicsShapeLabel, 0, 0);
+    layout->addWidget(dynamicsvalueLabel, 1, 0);
+    layout->addWidget(dynamicsDimensionLabel, 2, 0);
+    layout->addWidget(targetentityRefLabel, 3, 0);
+    layout->addWidget(targetvalueLabel, 4, 0);
+    layout->addWidget(dynamicsShapeComboBox, 0, 1);
+    layout->addWidget(dynamicsvalueLineEdit, 1, 1);
+    layout->addWidget(dynamicsDimensionComboBox, 2, 1);
+    layout->addWidget(targetentityRefComboBox, 3, 1);
+    layout->addWidget(targetvalueLineEdit, 4, 1);
+    setLayout(layout);
+}
+SynchronizeActionGroupBox::SynchronizeActionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("SynchronizeAction");
+    masterEntityRefLabel = new QLabel("masterEntityRef:");
+    relativeSpeedToMasterValueLabel = new QLabel("relativeSpeedToMasterValue:");
+    speedTargetValueTypeLabel = new QLabel("speedTargetValueType:");
+
+    masterEntityRefComboBox = new QComboBox;
+    relativeSpeedToMasterValueLineEdit = new QLineEdit;
+    speedTargetValueTypeComboBox = new QComboBox;
+
+    targetPositionMasterGroupBox = new PositionGroupBox(fieldprefix+"targetPositionMaster.", this);
+    targetPositionGroupBox = new PositionGroupBox(fieldprefix+"targetPosition.", this);
+
+    for (int i = 0; i < MAXACTORNUM; ++i) {
+        masterEntityRefComboBox->addItem("Actor"+QString::number(i));
+    }
+    speedTargetValueTypeComboBox->addItem("delta");
+    speedTargetValueTypeComboBox->addItem("factor");
+
+    registerField(fieldprefix+"masterEntityRef", masterEntityRefComboBox, "currentText");
+    registerField(fieldprefix+"relativeSpeedToMasterValue", relativeSpeedToMasterValueLineEdit);
+    registerField(fieldprefix+"speedTargetValueType", speedTargetValueTypeComboBox, "currentText");
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(masterEntityRefLabel, 0, 0);
+    layout->addWidget(relativeSpeedToMasterValueLabel, 1, 0);
+    layout->addWidget(speedTargetValueTypeLabel, 2, 0);
+    layout->addWidget(masterEntityRefComboBox, 0, 1);
+    layout->addWidget(relativeSpeedToMasterValueLineEdit, 1, 1);
+    layout->addWidget(speedTargetValueTypeComboBox, 2, 1);
+    layout->addWidget(targetPositionMasterGroupBox, 3, 0, 1, 2);
+    layout->addWidget(targetPositionGroupBox, 4, 0, 1, 2);
+    setLayout(layout);
+}
+RoutingActionGroupBox::RoutingActionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("RoutingAction");
+    positionGroupBox = new PositionGroupBox(fieldprefix+"Position.", this);
+    positionGroupBox->setTitle("AcquirePositionAction");
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(positionGroupBox, 0, 0);
+    setLayout(layout);
+}
+
+ActionGroupBox::ActionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("Action");
+    nameLabel = new QLabel("name:");
+    typeLabel = new QLabel("type:");
+
+    nameLineEdit = new QLineEdit;
+    typeComboBox = new QComboBox;
+    typeComboBox->addItem("EnvironmentAction");
+    typeComboBox->addItem("LongitudinalAction");
+    typeComboBox->addItem("LateralAction");
+    typeComboBox->addItem("SynchronizeAction");
+    typeComboBox->addItem("RoutingAction");
+
+    environmentActionGroupBox = new EnvironmentActionGroupBox(fieldprefix + "EnvironmentAction.", this);
+    longitudinalActionGroupBox = new LongitudinalActionGroupBox(fieldprefix + "LongitudinalAction.", this);
+    lateralActionGroupBox = new LateralActionGroupBox(fieldprefix + "LateralAction.", this);
+    synchronizeActionGroupBox = new SynchronizeActionGroupBox(fieldprefix + "SynchronizeAction.", this);
+    routingActionGroupBox = new RoutingActionGroupBox(fieldprefix + "RoutingAction.", this);
+
+    connect(typeComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateActionType()));
+    registerField(fieldprefix+"name", nameLineEdit);
+    registerField(fieldprefix+"type", typeComboBox, "currentText");
+
+    QString type = typeComboBox->currentText();
+    if (type == "EnvironmentAction") {
+        environmentActionGroupBox->setVisible(true);
+        longitudinalActionGroupBox->setVisible(false);
+        lateralActionGroupBox->setVisible(false);
+        synchronizeActionGroupBox->setVisible(false);
+        routingActionGroupBox->setVisible(false);
+    }
+    else if (type == "LongitudinalAction") {
+        environmentActionGroupBox->setVisible(false);
+        longitudinalActionGroupBox->setVisible(true);
+        lateralActionGroupBox->setVisible(false);
+        synchronizeActionGroupBox->setVisible(false);
+        routingActionGroupBox->setVisible(false);
+    }
+    else if (type == "LateralAction") {
+        environmentActionGroupBox->setVisible(false);
+        longitudinalActionGroupBox->setVisible(false);
+        lateralActionGroupBox->setVisible(true);
+        synchronizeActionGroupBox->setVisible(false);
+        routingActionGroupBox->setVisible(false);
+    }
+    else if (type == "SynchronizeAction") {
+        environmentActionGroupBox->setVisible(false);
+        longitudinalActionGroupBox->setVisible(false);
+        lateralActionGroupBox->setVisible(false);
+        synchronizeActionGroupBox->setVisible(true);
+        routingActionGroupBox->setVisible(false);
+    }
+    else if (type == "RoutingAction") {
+        environmentActionGroupBox->setVisible(false);
+        longitudinalActionGroupBox->setVisible(false);
+        lateralActionGroupBox->setVisible(false);
+        synchronizeActionGroupBox->setVisible(false);
+        routingActionGroupBox->setVisible(true);
+    }
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(nameLabel, 0, 0);
+    layout->addWidget(typeLabel, 1, 0);
+
+    layout->addWidget(nameLineEdit, 1, 1);
+    layout->addWidget(typeComboBox, 2, 1);
+    layout->addWidget(environmentActionGroupBox, 3, 0, 1, 2);
+    layout->addWidget(longitudinalActionGroupBox, 4, 0, 1, 2);
+    layout->addWidget(lateralActionGroupBox, 5, 0, 1, 2);
+    layout->addWidget(synchronizeActionGroupBox, 6, 0, 1, 2);
+    layout->addWidget(routingActionGroupBox, 7, 0, 1, 2);
+    setLayout(layout);
+}
+
+void ActionGroupBox::updateActionType()
+{
+    QString type = typeComboBox->currentText();
+    if (type == "EnvironmentAction") {
+        environmentActionGroupBox->setVisible(true);
+        longitudinalActionGroupBox->setVisible(false);
+        lateralActionGroupBox->setVisible(false);
+        synchronizeActionGroupBox->setVisible(false);
+        routingActionGroupBox->setVisible(false);
+    }
+    else if (type == "LongitudinalAction") {
+        environmentActionGroupBox->setVisible(false);
+        longitudinalActionGroupBox->setVisible(true);
+        lateralActionGroupBox->setVisible(false);
+        synchronizeActionGroupBox->setVisible(false);
+        routingActionGroupBox->setVisible(false);
+    }
+    else if (type == "LateralAction") {
+        environmentActionGroupBox->setVisible(false);
+        longitudinalActionGroupBox->setVisible(false);
+        lateralActionGroupBox->setVisible(true);
+        synchronizeActionGroupBox->setVisible(false);
+        routingActionGroupBox->setVisible(false);
+    }
+    else if (type == "SynchronizeAction") {
+        environmentActionGroupBox->setVisible(false);
+        longitudinalActionGroupBox->setVisible(false);
+        lateralActionGroupBox->setVisible(false);
+        synchronizeActionGroupBox->setVisible(true);
+        routingActionGroupBox->setVisible(false);
+    }
+    else if (type == "RoutingAction") {
+        environmentActionGroupBox->setVisible(false);
+        longitudinalActionGroupBox->setVisible(false);
+        lateralActionGroupBox->setVisible(false);
+        synchronizeActionGroupBox->setVisible(false);
+        routingActionGroupBox->setVisible(true);
+    }
+}
+
+EventGroupBox::EventGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,parent)
+{
+    setTitle("Event");
+    nameLabel = new QLabel("name:");
+    priorityLabel = new QLabel("priority:");
+    conditionNumLabel = new QLabel("Condition Number:");
+
+    nameLineEdit = new QLineEdit;
+    priorityComboBox = new QComboBox;
+    conditionNumComboBox = NumberQComboBox(MINCONDITIONNUM, MAXCONDITIONNUM);
+    priorityComboBox->addItem("overwrite");
+    priorityComboBox->addItem("skip");
+    priorityComboBox->addItem("parallel");
+
+    actionGroupBox = new ActionGroupBox(fieldprefix+"Action.", this);
+
+    connect(conditionNumComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateConditions()));
+    registerField(fieldprefix+"name", nameLineEdit);
+    registerField(fieldprefix+"priority", priorityComboBox, "currentText");
+    registerField(fieldprefix+"conditionNum", conditionNumComboBox, "currentText");
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(nameLabel, 0, 0);
+    layout->addWidget(priorityLabel, 1, 0);
+    layout->addWidget(conditionNumLabel, 2, 0);
+
+    layout->addWidget(nameLineEdit, 0, 1);
+    layout->addWidget(priorityComboBox, 1, 1);
+    layout->addWidget(conditionNumComboBox, 2, 1);
+    
+    layout->addWidget(actionGroupBox, 3, 0, 1, 2);
+
+    int conditionnum = conditionNumComboBox->currentText().toInt();
+    for (int i = 0; i < MAXCONDITIONNUM; ++i) {
+        ConditionGroupBox *box = new ConditionGroupBox(fieldprefix+"StartCondition"+QString::number(i)+".", this);
+        startConditionGroupBox.append(box);
+        box->setTitle("StartCondition"+QString::number(i));
+        if (i < conditionnum) {
+            box->setVisible(true);
+        }
+        else {
+            box->setVisible(false);
+        }
+        layout->addWidget(box, i+4, 0, 1, 2);
+    }
+    setLayout(layout);
+}
+void EventGroupBox::updateConditions()
+{
+    int conditionnum = conditionNumComboBox->currentText().toInt();
+    for (int i = 0; i < MAXCONDITIONNUM; ++i) {
+        if (i < conditionnum) {
+            startConditionGroupBox[i]->setVisible(true);
+        }
+        else {
+            startConditionGroupBox[i]->setVisible(false);
+        }
+    }
+}
+
+EventPage::EventPage(QWidget *parent)
+    : QWizardPage(parent)
+{
+    setTitle("Set Event");
+    setSubTitle("Design the events of your scenario.");
+    fieldprefix = "Event.";
+    QScrollArea* scrollArea = new QScrollArea;
+    QWidget *widget = new QWidget;
+    QGridLayout *layout = new QGridLayout;
+    eventNumLabel = new QLabel("event number:");
+    eventNumComboBox = NumberQComboBox(MINEVENTNUM, MAXEVENTNUM);
+
+    layout->addWidget(eventNumLabel, 0, 0);
+    layout->addWidget(eventNumComboBox, 0, 1);
+
+    connect(eventNumComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateEvent()));
+    registerField(fieldprefix+"eventNum", eventNumComboBox, "currentText");
+
+    int eventnum = eventNumComboBox->currentText().toInt();
+    for (int i = 0; i < MAXEVENTNUM; ++i) {
+        EventGroupBox *box = new EventGroupBox(fieldprefix+"Event"+QString::number(i)+".", this);
+        eventGroupBox.append(box);
+        box->setTitle("Event"+QString::number(i));
+        if (i < eventnum) {
+            box->setVisible(true);
+        }
+        else {
+            box->setVisible(false);
+        }
+        layout->addWidget(box, i+1, 0, 1, 2);
+    }
+
+    QVector<QString>::iterator itername;
+    QVector<QWidget*>::iterator iterwidget;
+    QVector<const char*>::iterator iterproperty;
+    for (itername = childfieldname.begin(), iterwidget = childfieldwidget.begin(), iterproperty = childfieldproperty.begin();
+      itername != childfieldname.end() && iterwidget!= childfieldwidget.end() && iterproperty != childfieldproperty.end();
+      ++itername, ++iterwidget, ++iterproperty
+    ) {
+        registerField(*itername, *iterwidget, *iterproperty);
+    }
+    childfieldname.clear();
+    childfieldwidget.clear();
+    childfieldproperty.clear();
+    layout->setAlignment(Qt::AlignTop);
+    widget->setLayout(layout);
+    scrollArea->setWidget(widget);
+    scrollArea->setWidgetResizable(true);
+
+    QGridLayout *wholelayout = new QGridLayout;
+    wholelayout->addWidget(scrollArea, 0, 0);
+    wholelayout->setAlignment(Qt::AlignTop);
+    setLayout(wholelayout);
+}
+int EventPage::nextId() const
+{
+    return LicenseWizard::Page_StoryCondition;
+}
+void EventPage::updateEvent()
+{
+    int eventnum = eventNumComboBox->currentText().toInt();
+    for (int i = 0; i < MAXEVENTNUM; ++i) {
+        if (i < eventnum) {
+            eventGroupBox[i]->setVisible(true);
+        }
+        else {
+            eventGroupBox[i]->setVisible(false);
+        }
+    }
+}
+
+StoryConditionPage::StoryConditionPage(QWidget *parent)
+    : QWizardPage(parent)
+{
+    setTitle("Set Story Condition");
+    setSubTitle("Set the start conditions and stop conditions of the stories.");
+    fieldprefix = "Story.";
+
+    QScrollArea* scrollArea = new QScrollArea;
+    QWidget *widget = new QWidget;
+    QGridLayout *layout = new QGridLayout;
+    startConditionNumLabel = new QLabel("startConditionNum");
+    stopConditionNumLabel = new QLabel("stopConditionNum");
+
+    startConditionNumComboBox = NumberQComboBox(MINCONDITIONNUM, MAXCONDITIONNUM);
+    stopConditionNumComboBox = NumberQComboBox(MINCONDITIONNUM, MAXCONDITIONNUM);
+
+    layout->addWidget(startConditionNumLabel, 0, 0);
+    layout->addWidget(startConditionNumComboBox, 0, 1);
+    layout->addWidget(stopConditionNumLabel, 1, 0);
+    layout->addWidget(stopConditionNumComboBox, 1, 1);
+    connect(startConditionNumComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateConditions()));
+    connect(stopConditionNumComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateConditions()));
+    int startConditionNum = startConditionNumComboBox->currentText().toInt();
+    int stopConditionNum = stopConditionNumComboBox->currentText().toInt();
+    for (int i = 0; i < MAXCONDITIONNUM; ++i) {
+        ConditionGroupBox *box = new ConditionGroupBox(fieldprefix+"StartCondition"+QString::number(i)+".", this);
+        startConditionGroupBox.append(box);
+        box->setTitle("StartCondition"+QString::number(i));
+        if (i < startConditionNum) {
+            box->setVisible(true);
+        }
+        else {
+            box->setVisible(false);
+        }
+        layout->addWidget(box, i+2, 0, 1, 2);
+    }
+    for (int i = 0; i < MAXCONDITIONNUM; ++i) {
+        ConditionGroupBox *box = new ConditionGroupBox(fieldprefix+"StopCondition"+QString::number(i)+".", this);
+        stopConditionGroupBox.append(box);
+        box->setTitle("StopCondition"+QString::number(i));
+        if (i < stopConditionNum) {
+            box->setVisible(true);
+        }
+        else {
+            box->setVisible(false);
+        }
+        layout->addWidget(box, i+MAXCONDITIONNUM+2, 0, 1, 2);
+    }
+    registerField(fieldprefix+"startConditionNumb", startConditionNumComboBox, "currentText");
+    registerField(fieldprefix+"stopConditionNumb", stopConditionNumComboBox, "currentText");
+    QVector<QString>::iterator itername;
+    QVector<QWidget*>::iterator iterwidget;
+    QVector<const char*>::iterator iterproperty;
+    for (itername = childfieldname.begin(), iterwidget = childfieldwidget.begin(), iterproperty = childfieldproperty.begin();
+      itername != childfieldname.end() && iterwidget!= childfieldwidget.end() && iterproperty != childfieldproperty.end();
+      ++itername, ++iterwidget, ++iterproperty
+    ) {
+        registerField(*itername, *iterwidget, *iterproperty);
+    }
+    childfieldname.clear();
+    childfieldwidget.clear();
+    childfieldproperty.clear();
+    layout->setAlignment(Qt::AlignTop);
+    widget->setLayout(layout);
+    scrollArea->setWidget(widget);
+    scrollArea->setWidgetResizable(true);
+    QGridLayout *wholelayout = new QGridLayout;
+    wholelayout->addWidget(scrollArea, 0, 0);
+    wholelayout->setAlignment(Qt::AlignTop);
+    setLayout(wholelayout);
+}
+int StoryConditionPage::nextId() const
+{
     return LicenseWizard::Page_StopTrigger;
+}
+void StoryConditionPage::updateConditions()
+{
+    int startConditionNum = startConditionNumComboBox->currentText().toInt();
+    int stopConditionNum = stopConditionNumComboBox->currentText().toInt();
+    for (int i = 0; i < MAXCONDITIONNUM; ++i) {
+        if (i < startConditionNum) {
+            startConditionGroupBox[i]->setVisible(true);
+        }
+        else {
+            startConditionGroupBox[i]->setVisible(false);
+        }
+    }
+    for (int i = 0; i < MAXCONDITIONNUM; ++i) {
+        if (i < stopConditionNum) {
+            stopConditionGroupBox[i]->setVisible(true);
+        }
+        else {
+            stopConditionGroupBox[i]->setVisible(false);
+        }
+    }
 }
 
 StopTriggerPage::StopTriggerPage(QWidget *parent)
     : QWizardPage(parent)
 {
     setTitle("<i>OpenScenario</i>&trade; StopTrigger");
-    setSubTitle("Set your StopTriggers of the whole scenario file");
+    setSubTitle("Set your StopTriggers of the whole scenario file.");
     criteria_RunningStopTest = new QLabel("criteria_RunningStopTest(recommended)");
     criteria_RunningRedLightTest = new QLabel("criteria_RunningRedLightTest(recommended)");
     criteria_WrongLaneTest = new QLabel("criteria_WrongLaneTest(recommended)");

@@ -890,7 +890,7 @@ SETRES XOSC::setStory(const Story *s)
             case LONGITUDINALACTION: {
                 // <PrivateAction>
                 tinyxml2::XMLElement *PrivateAction = doc->NewElement("PrivateAction");
-                // TODO: Add support for LongitudinalDistanceAction
+                // LongitudinalDistanceAction is now unsupported
                 // <LongitudinalAction>
                 tinyxml2::XMLElement *LongitudinalAction = doc->NewElement("LongitudinalAction");
                 
