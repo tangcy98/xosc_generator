@@ -173,7 +173,32 @@ static tinyxml2::XMLElement* newConditionElement(tinyxml2::XMLDocument *doc, con
 
             // <ReachPositionCondition>
             tinyxml2::XMLElement *ReachPositionCondition = doc->NewElement("ReachPositionCondition");
-            ReachPositionCondition->SetAttribute("value", c->reachPositionCondition.tolerance.c_str());
+            ReachPositionCondition->SetAttribute("tolerance", c->reachPositionCondition.tolerance.c_str());
+            // <Position>
+            tinyxml2::XMLElement *Position = doc->NewElement("Position");
+
+            // <WorldPosition>, <LanePosition>
+            if (c->reachPositionCondition.position.positiontype == WORLD) {
+                tinyxml2::XMLElement *WorldPosition = doc->NewElement("WorldPosition");
+                WorldPosition->SetAttribute("x", c->reachPositionCondition.position.worldPosition.x.c_str());
+                WorldPosition->SetAttribute("y", c->reachPositionCondition.position.worldPosition.y.c_str());
+                WorldPosition->SetAttribute("z", c->reachPositionCondition.position.worldPosition.z.c_str());
+                WorldPosition->SetAttribute("h", c->reachPositionCondition.position.worldPosition.h.c_str());
+                Position->LinkEndChild(WorldPosition);
+            }
+            else if (c->reachPositionCondition.position.positiontype == LANE) {
+                tinyxml2::XMLElement *LanePosition = doc->NewElement("LanePosition");
+                LanePosition->SetAttribute("roadId", c->reachPositionCondition.position.lanePosition.roadId.c_str());
+                LanePosition->SetAttribute("laneId", c->reachPositionCondition.position.lanePosition.laneId.c_str());
+                LanePosition->SetAttribute("offset", c->reachPositionCondition.position.lanePosition.offset.c_str());
+                LanePosition->SetAttribute("s", c->reachPositionCondition.position.lanePosition.s.c_str());
+                Position->LinkEndChild(LanePosition);
+            }
+            // </WorldPosition>, </LanePosition>
+
+            ReachPositionCondition->LinkEndChild(Position);
+            // </Position>
+            
             EntityCondition->LinkEndChild(ReachPositionCondition);
             // </ReachPositionCondition>
 
@@ -1162,6 +1187,12 @@ SETRES XOSC::setStory(const Story *s)
 
     // </StopTrigger>
     Act->LinkEndChild(StopTrigger);
+
+    Story->LinkEndChild(Act);
+    // </Act>
+
+    Storyboard->LinkEndChild(Story);
+    // </Story>
 
     return SET_OK;
 }

@@ -320,13 +320,12 @@ void LicenseWizard::accept()
 
     // begin - Story
     Story story;
-
     story.storyName = field("Story.storyName").toString().toStdString();
     story.actName = field("Story.actName").toString().toStdString();
     story.maneuverGroupName = field("Story.maneuverGroupName").toString().toStdString();
     story.maximumExecutionCount = field("Story.maximumExecutionCount").toString().toStdString();
     story.selectTriggeringEntities = field("Story.selectTriggeringEntities").toString().toStdString();
-    story.entityRef = field("Actor."+field("Story.entityRef").toString()+".name").toString().toStdString();
+    story.entityRef = field("Actor."+field("Story.entityRef").toString()+".objectname").toString().toStdString();
     story.maneuverName = field("Story.maneuverName").toString().toStdString();
     
     int eventnum = field("Event.eventNum").toInt();
@@ -377,11 +376,11 @@ void LicenseWizard::accept()
         event.action.lateralAction.dynamicsShape = field(prefix+"Action.LateralAction.dynamicsShape").toString().toStdString();
         event.action.lateralAction.dynamicsvalue = field(prefix+"Action.LateralAction.dynamicsvalue").toString().toStdString();
         event.action.lateralAction.dynamicsDimension = field(prefix+"Action.LateralAction.dynamicsDimension").toString().toStdString();
-        event.action.lateralAction.targetentityRef = field("Actor."+field(prefix+"Action.LateralAction.targetentityRef").toString()+".name").toString().toStdString();
+        event.action.lateralAction.targetentityRef = field("Actor."+field(prefix+"Action.LateralAction.targetentityRef").toString()+".objectname").toString().toStdString();
         event.action.lateralAction.targetvalue = field(prefix+"Action.LateralAction.targetvalue").toString().toStdString();
 
         // SynchronizeAction
-        event.action.synchronizeAction.masterEntityRef = field("Actor."+field(prefix+"Action.SynchronizeAction.masterEntityRef").toString()+".name").toString().toStdString();
+        event.action.synchronizeAction.masterEntityRef = field("Actor."+field(prefix+"Action.SynchronizeAction.masterEntityRef").toString()+".objectname").toString().toStdString();
         event.action.synchronizeAction.relativeSpeedToMasterValue = field(prefix+"Action.SynchronizeAction.relativeSpeedToMasterValue").toString().toStdString();
         event.action.synchronizeAction.speedTargetValueType = field(prefix+"Action.SynchronizeAction.speedTargetValueType").toString().toStdString();
         type = field(prefix+"Action.SynchronizeAction.targetPositionMaster.type").toString();
@@ -439,7 +438,7 @@ void LicenseWizard::accept()
             condition.name = field(conditionprefix+"name").toString().toStdString();
             condition.delay = field(conditionprefix+"delay").toString().toStdString();
             condition.conditionEdge = field(conditionprefix+"conditionEdge").toString().toStdString();
-            condition.triggeringEntityRef = field("Actor."+field(conditionprefix+"triggeringEntityRef").toString()+".name").toString().toStdString();
+            condition.triggeringEntityRef = field("Actor."+field(conditionprefix+"triggeringEntityRef").toString()+".objectname").toString().toStdString();
             QString type = field(conditionprefix+"type").toString();
             if (type == "ParameterCondition") {
                 condition.type = PARAMETERCONDITION;
@@ -501,7 +500,7 @@ void LicenseWizard::accept()
             condition.reachPositionCondition.position.lanePosition.s = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.s").toString().toStdString();
 
             // RelativeDistanceCondition
-            condition.relativeDistanceCondition.entityRef = field("Actor."+field(conditionprefix+"RelativeDistanceCondition.entityRef").toString()+".name").toString().toStdString();
+            condition.relativeDistanceCondition.entityRef = field("Actor."+field(conditionprefix+"RelativeDistanceCondition.entityRef").toString()+".objectname").toString().toStdString();
             condition.relativeDistanceCondition.relativeDistanceType = field(conditionprefix+"RelativeDistanceCondition.relativeDistanceType").toString().toStdString();
             condition.relativeDistanceCondition.value = field(conditionprefix+"RelativeDistanceCondition.value").toString().toStdString();
             condition.relativeDistanceCondition.freespace = field(conditionprefix+"RelativeDistanceCondition.freespace").toString().toStdString();
@@ -518,7 +517,7 @@ void LicenseWizard::accept()
         condition.name = field(conditionprefix+"name").toString().toStdString();
         condition.delay = field(conditionprefix+"delay").toString().toStdString();
         condition.conditionEdge = field(conditionprefix+"conditionEdge").toString().toStdString();
-        condition.triggeringEntityRef = field("Actor."+field(conditionprefix+"triggeringEntityRef").toString()+".name").toString().toStdString();
+        condition.triggeringEntityRef = field("Actor."+field(conditionprefix+"triggeringEntityRef").toString()+".objectname").toString().toStdString();
         QString type = field(conditionprefix+"type").toString();
         if (type == "ParameterCondition") {
             condition.type = PARAMETERCONDITION;
@@ -580,7 +579,7 @@ void LicenseWizard::accept()
         condition.reachPositionCondition.position.lanePosition.s = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.s").toString().toStdString();
 
         // RelativeDistanceCondition
-        condition.relativeDistanceCondition.entityRef = field("Actor."+field(conditionprefix+"RelativeDistanceCondition.entityRef").toString()+".name").toString().toStdString();
+        condition.relativeDistanceCondition.entityRef = field("Actor."+field(conditionprefix+"RelativeDistanceCondition.entityRef").toString()+".objectname").toString().toStdString();
         condition.relativeDistanceCondition.relativeDistanceType = field(conditionprefix+"RelativeDistanceCondition.relativeDistanceType").toString().toStdString();
         condition.relativeDistanceCondition.value = field(conditionprefix+"RelativeDistanceCondition.value").toString().toStdString();
         condition.relativeDistanceCondition.freespace = field(conditionprefix+"RelativeDistanceCondition.freespace").toString().toStdString();
@@ -595,7 +594,7 @@ void LicenseWizard::accept()
         condition.name = field(conditionprefix+"name").toString().toStdString();
         condition.delay = field(conditionprefix+"delay").toString().toStdString();
         condition.conditionEdge = field(conditionprefix+"conditionEdge").toString().toStdString();
-        condition.triggeringEntityRef = field("Actor."+field(conditionprefix+"triggeringEntityRef").toString()+".name").toString().toStdString();
+        condition.triggeringEntityRef = field("Actor."+field(conditionprefix+"triggeringEntityRef").toString()+".objectname").toString().toStdString();
         QString type = field(conditionprefix+"type").toString();
         if (type == "ParameterCondition") {
             condition.type = PARAMETERCONDITION;
@@ -657,7 +656,7 @@ void LicenseWizard::accept()
         condition.reachPositionCondition.position.lanePosition.s = field(conditionprefix+"ReachPositionCondition.Position.LanePosition.s").toString().toStdString();
 
         // RelativeDistanceCondition
-        condition.relativeDistanceCondition.entityRef = field("Actor."+field(conditionprefix+"RelativeDistanceCondition.entityRef").toString()+".name").toString().toStdString();
+        condition.relativeDistanceCondition.entityRef = field("Actor."+field(conditionprefix+"RelativeDistanceCondition.entityRef").toString()+".objectname").toString().toStdString();
         condition.relativeDistanceCondition.relativeDistanceType = field(conditionprefix+"RelativeDistanceCondition.relativeDistanceType").toString().toStdString();
         condition.relativeDistanceCondition.value = field(conditionprefix+"RelativeDistanceCondition.value").toString().toStdString();
         condition.relativeDistanceCondition.freespace = field(conditionprefix+"RelativeDistanceCondition.freespace").toString().toStdString();
@@ -1553,12 +1552,13 @@ StoryboardElementStateConditionGroupBox::StoryboardElementStateConditionGroupBox
     storyboardElementRefComboBox = new QComboBox;
     stateComboBox = new QComboBox;
 
+    storyboardElementTypeComboBox->addItem("action");
     storyboardElementTypeComboBox->addItem("story");
     storyboardElementTypeComboBox->addItem("act");
     storyboardElementTypeComboBox->addItem("maneuver");
     storyboardElementTypeComboBox->addItem("event");
-    storyboardElementTypeComboBox->addItem("action");
     storyboardElementTypeComboBox->addItem("maneuverGroup");
+
     for (int i = 0; i < MAXEVENTNUM; ++i) {
         storyboardElementRefComboBox->addItem("Event"+QString::number(i));
     }
@@ -1647,6 +1647,12 @@ RelativeDistanceConditionGroupBox::RelativeDistanceConditionGroupBox(QString str
     relativeDistanceTypeComboBox->addItem("cartesianDistance");
     relativeDistanceTypeComboBox->addItem("longitudinal");
     relativeDistanceTypeComboBox->addItem("lateral");
+
+    registerField(fieldprefix+"entityRef", entityRefComboBox, "currentText");
+    registerField(fieldprefix+"relativeDistanceType", relativeDistanceTypeComboBox, "currentText");
+    registerField(fieldprefix+"value", valueLineEdit);
+    registerField(fieldprefix+"freespace", freespaceComboBox, "currentText");
+    registerField(fieldprefix+"rule", ruleComboBox, "currentText");
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(entityRefLabel, 0, 0);
@@ -1775,14 +1781,14 @@ ConditionGroupBox::ConditionGroupBox(QString str, QWidget *parent) : XOSCGroupBo
     layout->addWidget(nameLabel, 0, 0);
     layout->addWidget(delayLabel, 1, 0);
     layout->addWidget(conditionEdgeLabel, 2, 0);
-    layout->addWidget(triggeringEntityRefLabel, 3, 0);
-    layout->addWidget(typeLabel, 4, 0);
+    layout->addWidget(typeLabel, 3, 0);
+    layout->addWidget(triggeringEntityRefLabel, 4, 0);
 
     layout->addWidget(nameLineEdit, 0, 1);
     layout->addWidget(delayLineEdit, 1, 1);
     layout->addWidget(conditionEdgeComboBox, 2, 1);
-    layout->addWidget(triggeringEntityRefComboBox, 3, 1);
-    layout->addWidget(typeComboBox, 4, 1);
+    layout->addWidget(typeComboBox, 3, 1);
+    layout->addWidget(triggeringEntityRefComboBox, 4, 1);
 
     layout->addWidget(parameterConditionGroupBox, 5, 0, 1, 2);
     layout->addWidget(simulationTimeConditionGroupBox, 6, 0, 1, 2);
@@ -2146,13 +2152,13 @@ ActionGroupBox::ActionGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,
     layout->addWidget(nameLabel, 0, 0);
     layout->addWidget(typeLabel, 1, 0);
 
-    layout->addWidget(nameLineEdit, 1, 1);
-    layout->addWidget(typeComboBox, 2, 1);
-    layout->addWidget(environmentActionGroupBox, 3, 0, 1, 2);
-    layout->addWidget(longitudinalActionGroupBox, 4, 0, 1, 2);
-    layout->addWidget(lateralActionGroupBox, 5, 0, 1, 2);
-    layout->addWidget(synchronizeActionGroupBox, 6, 0, 1, 2);
-    layout->addWidget(routingActionGroupBox, 7, 0, 1, 2);
+    layout->addWidget(nameLineEdit, 0, 1);
+    layout->addWidget(typeComboBox, 1, 1);
+    layout->addWidget(environmentActionGroupBox, 2, 0, 1, 2);
+    layout->addWidget(longitudinalActionGroupBox, 3, 0, 1, 2);
+    layout->addWidget(lateralActionGroupBox, 4, 0, 1, 2);
+    layout->addWidget(synchronizeActionGroupBox, 5, 0, 1, 2);
+    layout->addWidget(routingActionGroupBox, 6, 0, 1, 2);
     setLayout(layout);
 }
 
@@ -2220,13 +2226,13 @@ EventGroupBox::EventGroupBox(QString str, QWidget *parent) : XOSCGroupBox(str,pa
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(nameLabel, 0, 0);
     layout->addWidget(priorityLabel, 1, 0);
-    layout->addWidget(conditionNumLabel, 2, 0);
+    layout->addWidget(conditionNumLabel, 3, 0);
 
     layout->addWidget(nameLineEdit, 0, 1);
     layout->addWidget(priorityComboBox, 1, 1);
-    layout->addWidget(conditionNumComboBox, 2, 1);
+    layout->addWidget(conditionNumComboBox, 3, 1);
     
-    layout->addWidget(actionGroupBox, 3, 0, 1, 2);
+    layout->addWidget(actionGroupBox, 2, 0, 1, 2);
 
     int conditionnum = conditionNumComboBox->currentText().toInt();
     for (int i = 0; i < MAXCONDITIONNUM; ++i) {
