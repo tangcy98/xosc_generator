@@ -148,52 +148,7 @@ LicenseWizard::LicenseWizard(QWidget *parent)
 #ifndef Q_OS_MAC
     setWizardStyle(ModernStyle);
 #endif
-    setOption(HaveHelpButton, true);
-    // setPixmap(QWizard::LogoPixmap, QPixmap(":/images/logo.png"));
-
-    connect(this, &QWizard::helpRequested, this, &LicenseWizard::showHelp);
-
     setWindowTitle(tr("License Wizard"));
-}
-
-void LicenseWizard::showHelp()
-{
-    static QString lastHelpMessage;
-
-    QString message;
-
-    switch (currentId()) {
-    case Page_Intro:
-        message = tr("The decision you make here will affect which page you "
-                     "get to see next.");
-        break;
-    case Page_Filename:
-        message = tr("Make sure to provide a valid email address, such as "
-                     "toni.buddenbrook@example.de.");
-        break;
-    case Page_Map:
-        message = tr("If you don't provide an upgrade key, you will be "
-                     "asked to fill in your details.");
-        break;
-    case Page_Environment:
-        message = tr("Make sure to provide a valid email address, such as "
-                     "thomas.gradgrind@example.co.uk.");
-        break;
-    case Page_Actor:
-        message = tr("You must accept the terms and conditions of the "
-                     "license to proceed.");
-        break;
-    default:
-        message = tr("This help is likely not to be of any help.");
-    }
-
-    if (lastHelpMessage == message)
-        message = tr("Sorry, I already gave what help I could. "
-                     "Maybe you should try asking a human?");
-
-    QMessageBox::information(this, tr("License Wizard Help"), message);
-
-    lastHelpMessage = message;
 }
 
 void LicenseWizard::accept()

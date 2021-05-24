@@ -10,7 +10,6 @@ QT_BEGIN_NAMESPACE
 class QCheckBox;
 class QLabel;
 class QLineEdit;
-class QRadioButton;
 QT_END_NAMESPACE
 
 // static QComboBox* BooleanQComboBox(bool defaultopt = true);
@@ -44,10 +43,6 @@ public:
 
     LicenseWizard(QWidget *parent = nullptr);
     void accept() override;
-
-private slots:
-    void showHelp();
-    
 };
 
 class IntroPage : public QWizardPage

@@ -1,6 +1,4 @@
 #include <QApplication>
-#include <QLocale>
-#include <QLibraryInfo>
 
 #include "licensewizard.h"
 
